@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 from .database import engine, Base
 from .models.post_model import Post  
+from .models.contact_model import Contact  
+from .models.comment_model import Comment  
+from .models.tool_model import Tool  
+from .models.user_usage_model import ToolUsage  
 # from .models import Base
 
 # from .router import auth, todos, admin, user

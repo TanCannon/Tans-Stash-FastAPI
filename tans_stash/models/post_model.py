@@ -11,7 +11,10 @@ class Post(Base):
     slug = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
     tag_line = Column(String(255), nullable=False)
-    description = Column(String(500), nullable=False, default="Tan's Blogpost")
+    description = Column(String(500), nullable=False, default="Tan's Stash")
     date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     last_modified = Column(DateTime(timezone=True), nullable=True)
     img_file = Column(String(120), nullable=True)
+
+    def __repr__(self):
+        return f"<Post {self.slug}>"
