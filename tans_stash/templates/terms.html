@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+
+{% set fname =  "assets/img/about-bg.jpg" %}
+{% set ftitle = "Terms of Service | " ~ params['website_name'] %}
+{% set fdescription =  "View our Terms of Service outlining fair use, intellectual property rights, and user responsibilities on " ~ params['website_name'] ~ "."%}
+
+{% block title %}
+{{ftitle}}
+{% endblock %}
+
+{% block meta_description %}
+{{fdescription}}
+{% endblock %}
+
+{% block og_title %}{{ftitle}}{% endblock %}
+{% block og_description %}{{ fdescription }}{% endblock %}
+{% block og_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+
+{% block twitter_title %}{{ ftitle }}{% endblock %}
+{% block twitter_description %}{{ fdescription }}{% endblock %}
+{% block twitter_image %}{{ url_for('static',filename=fname,  _external=True)}}{% endblock %}
+
+{% block page_style %}
+{{url_for('static', filename='css/about.css')}}
+{% endblock page_style %}  
+
+{%block add_headers%}
+    <meta name="robots" content="noindex, follow">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "BreadcrumbList",
+                    "@id": "{{ request.base_url }}#breadcrumb",
+                    "itemListElement": [
+                        {"@type": "ListItem","position": 1,"name": "Home","item": "https://tancannon2003.pythonanywhere.com/"},
+                        {"@type": "ListItem","position": 2,"name": "Terms and Conditions","item": "{{ request.url }}"}
+                    ]
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "{{ request.base_url }}#terms",
+                    "url": "{{ request.url }}",
+                    "name": "Terms and Conditions",
+                    "description": "Read the terms and conditions governing the use of {{params["website_name"]}} and its services.",
+                    "isPartOf": {"@id": "https://tancannon2003.pythonanywhere.com/#website"},
+                    "publisher": {"@id": "https://tancannon2003.pythonanywhere.com/#organization"},
+                    "inLanguage": "en"
+                }
+            ]
+        }
+    </script>
+
+{%endblock add_headers%}
+
+{% block body %}
+
+<!-- Page Header-->
+<header class="masthead"
+    style="background-image: url('{{url_for('static', filename=fname)}}')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="page-heading">
+                    <h1>Terms of Service</h1>
+                    <span class="subheading">Last Updated: October 2025</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Main Content-->
+<main class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="container">
+                    <!--<h1>Terms of Service</h1>-->
+
+                    <p style="text-align: justify;">Welcome to <strong>{{params['website_name']}}</strong>. By accessing or using this website, you agree to the following terms and conditions.</p>
+
+                    <h2>1. Acceptance of Terms</h2>
+                    <p style="text-align: justify;">By using our blog or tools, you agree to these Terms of Service. If you do not agree, please discontinue use.</p>
+
+                    <h2>2. Use of Our Tools</h2>
+                    <p style="text-align: justify;">Our online tools are provided “as-is” for educational and personal purposes. You agree not to misuse the tools or attempt to harm the website or its infrastructure.</p>
+
+                    <h2>3. Intellectual Property</h2>
+                    <p style="text-align: justify;">All articles, code samples, designs, and resources published on this site are owned by <strong>Tanmaya Kumar Naik</strong> unless otherwise credited. Reproduction or redistribution requires prior written permission.</p>
+
+                    <h2>4. Limitation of Liability</h2>
+                    <p style="text-align: justify;">We do not guarantee the accuracy, reliability, or availability of the website or tools. Use them at your own risk. We are not liable for any losses, damages, or data issues arising from use of the site.</p>
+
+                    <h2>5. External Links</h2>
+                    <p style="text-align: justify;">Our content may contain links to third-party websites. We are not responsible for their content or practices.</p>
+
+                    <h2>6. Modifications</h2>
+                    <p style="text-align: justify;">We reserve the right to update these Terms at any time. Continued use of the site after updates constitutes acceptance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </main>
+{% endblock %}

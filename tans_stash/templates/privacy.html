@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% set fname =  "assets/img/about-bg.jpg" %}
+{% set ftitle = "Privacy Policy | " ~ params['website_name'] %}
+{% set fdescription =  "Understand how "~ params['website_name'] ~" handles data and ensures user privacy while you explore our blogs and tools." %}
+
+{% block title %}
+{{ftitle}}
+{% endblock %}
+
+{% block meta_description %}
+{{fdescription}}
+{% endblock %}
+
+{% block og_title %}{{ftitle}}{% endblock %}
+{% block og_description %}{{ fdescription }}{% endblock %}
+{% block og_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+
+{% block twitter_title %}{{ ftitle }}{% endblock %}
+{% block twitter_description %}{{ fdescription }}{% endblock %}
+{% block twitter_image %}{{ url_for('static',filename=fname,  _external=True)}}{% endblock %}
+
+{% block page_style %}
+{{url_for('static', filename='css/about.css')}}
+{% endblock page_style %}  
+
+{%block add_headers%}
+    <meta name="robots" content="noindex, follow">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "BreadcrumbList",
+                    "@id": "{{ request.base_url }}#breadcrumb",
+                    "itemListElement": [
+                        {"@type": "ListItem","position": 1,"name": "Home","item": "https://tancannon2003.pythonanywhere.com/"},
+                        {"@type": "ListItem","position": 2,"name": "Privacy Policy","item": "{{ request.url }}"}
+                    ]
+                },
+                {
+                    "@type": "WebPage",
+                    "@id": "{{ request.base_url }}#privacy",
+                    "url": "{{ request.url }}",
+                    "name": "Privacy Policy",
+                    "description": "Read how {{params["website_name"]}} collects, uses, and protects user data and privacy.",
+                    "isPartOf": {"@id": "https://tancannon2003.pythonanywhere.com/#website"},
+                    "publisher": {"@id": "https://tancannon2003.pythonanywhere.com/#organization"},
+                    "inLanguage": "en"
+                }
+            ]
+        }
+    </script>
+
+{%endblock add_headers%}
+
+{% block body %}
+
+<!-- Page Header-->
+<header class="masthead"
+    style="background-image: url('{{url_for('static', filename=fname)}}')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="page-heading">
+                    <h1>Privacy Policy</h1>
+                    <span class="subheading">Last Updated: October 2025</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Main Content-->
+<main class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="container">
+                    <!--<h1>Privacy Policy</h1>-->
+
+                    <p style="text-align: justify;">Welcome to <strong>{{params['website_name']}}</strong>, operated by <strong>Tanmaya Kumar Naik</strong> (“we,” “our,” or “us”). Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your information when you visit our website or use our online tools.</p>
+
+                    <h2>1. Information We Collect</h2>
+                    <p style="text-align: justify;"><strong>Usage Data:</strong> We may collect non-identifiable information such as browser type, IP address, pages visited, and time spent on the site through analytics tools (e.g., Google Analytics).</p>
+                    <p style="text-align: justify;"><strong>Form Data:</strong> When you contact us or use certain tools, we may collect data you voluntarily submit (like names, emails, or text inputs).</p>
+                    <p style="text-align: justify;"><strong>Cookies & Local Storage:</strong> Used to improve functionality and remember your preferences. You can disable them in your browser settings.</p>
+
+                    <h2>2. How We Use Your Information</h2>
+                    <ul>
+                    <li>To maintain and improve our blog and tools.</li>
+                    <li>To analyze website traffic and usage patterns.</li>
+                    <li>To respond to messages or support requests.</li>
+                    <li>To ensure security and prevent misuse of our tools.</li>
+                    </ul>
+
+                    <h2>3. Data Retention & Security</h2>
+                    <p style="text-align: justify;">We do not sell or share your personal data. Input data from tools is processed temporarily and not stored permanently. Reasonable security measures are in place to protect your information.</p>
+
+                    <h2>4. Third-Party Services</h2>
+                    <p style="text-align: justify;">Our website may use or link to external APIs and services such as Google Fonts, reCAPTCHA, or analytics. These third parties have their own privacy policies.</p>
+
+                    <h2>5. Your Rights</h2>
+                    <p style="text-align: justify;">You can request correction or deletion of any personal information you’ve shared via the <a href="{{ url_for('contact.contact') }}">Contact Page</a>.</p>
+
+                    <h2>6. Contact</h2>
+                    <p style="text-align: justify;">For privacy concerns, contact us via our <a href="{{ url_for('contact.contact') }}">Contact Page</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </main>
+{% endblock %}

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NZ92PJR8');</script>
+    <!-- End Google Tag Manager -->
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <!--Google search console verification meta tag-->
+    <meta name="google-site-verification" content="PjFNkE03vlm_kSAYvuJEx-WRfpUXwiJkVzSJvSlkz2o" />
+
+    <!--Google adsense Code-->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6846940557654925"
+    crossorigin="anonymous"></script>
+    <!--End Google adsense Code-->
+
+    <!-- Meta Description -->
+    <meta name="description" content="{% block meta_description %}{{ params['website_description'] }}{% endblock %}" />
+    <meta name="author" content="Tanmaya Kumar Naik" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:site_name" content="{{ params['website_name'] }}">
+    <meta property="og:title" content="{% block og_title %}{{ params['website_name'] }}{% endblock %}" />
+    <meta property="og:description" content="{% block og_description %}{{ params['website_description'] }}{% endblock %}" />
+    <meta property="og:image" content="{% block og_image %}{% endblock %}" />
+    <meta property="og:url" content="{{ request.url }}" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{% block twitter_title %}{{ params['website_name'] }}{% endblock %}" />
+    <meta name="twitter:description" content="{% block twitter_description %}{{ params['website_description'] }}{% endblock %}" />
+    <meta name="twitter:image" content="{% block twitter_image %}{% endblock %}" />
+    <meta name="twitter:url" content="{{ request.url }}" />
+
+    <title>{% block title %}{{ params['website_name'] }}{% endblock %}</title>
+
+    <!-- Favicon -->
+    <!-- Every time you change the favicon rename the last part: ?v=3, ?v=4 -->
+    <!-- Primary favicon (multi-size .ico: 16, 32, 48) -->
+    <link
+    rel="icon"
+    type="image/x-icon"
+    sizes="48x48"
+    href="{{ url_for('static', filename='favicon/favicon.ico') }}?v=2">
+
+    <!-- PNG favicons for modern browsers -->
+    <link
+    rel="icon"
+    type="image/png"
+    sizes="32x32"
+    href="{{ url_for('static', filename='favicon/favicon-32x32.png') }}?v=2">
+
+    <link
+    rel="icon"
+    type="image/png"
+    sizes="16x16"
+    href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}?v=2">
+
+    <!-- Apple Touch Icon (iOS) -->
+    <link
+    rel="apple-touch-icon"
+    sizes="180x180"
+    href="{{ url_for('static', filename='favicon/apple-touch-icon-180x180.png') }}?v=2">
+
+    <!-- Web App Manifest (Android / PWA) -->
+    <link
+    rel="manifest"
+    href="{{ url_for('static', filename='favicon/site.webmanifest') }}">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="{{ request.url }}">
+
+    <!-- Preconnects for faster font & CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Google Fonts with preload & display=swap -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic&display=swap">
+
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&display=swap">
+
+    <!-- Font Awesome (defer loading to avoid render-blocking) -->
+    <link rel="preload" href="https://use.fontawesome.com/releases/v6.1.0/css/all.css"
+      as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.0/css/all.css">
+    </noscript>
+
+    <!-- Core theme CSS -->
+    <link href="{% block page_style %}{% endblock page_style %}" rel="stylesheet" />
+
+    <!-- Global Structured Data -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+
+                {
+                "@type": "Organization",
+                "@id": "https://tancannon2003.pythonanywhere.com/#organization",
+                "name": "{{params["website_name"]}}",
+                "alternateName": "{{params["website_name"]}}",
+                "url": "https://tancannon2003.pythonanywhere.com/",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "{{params['favicon_url']}}",
+                    "width": 512,
+                    "height": 512
+                },
+                "sameAs": [
+                    "https://github.com/TanCannon",
+                    "https://www.linkedin.com/in/tanmaya-kumar-naik/"
+                ],
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "Customer Support",
+                    "email": "tanmayakumarnaik2003@gmail.com"
+                },
+                "founder": {
+                    "@type": "Person",
+                    "name": "Tanmaya Kumar Naik",
+                    "url": "https://tancannon2003.pythonanywhere.com/about",
+                    "jobTitle": "Software Developer"
+                }
+                },
+
+                {
+                "@type": "WebSite",
+                "@id": "https://tancannon2003.pythonanywhere.com/#website",
+                "url": "https://tancannon2003.pythonanywhere.com/",
+                "name": "{{params["website_name"]}}",
+                "alternateName": "{{params["website_name"]}}",
+                "publisher": { "@id": "https://tancannon2003.pythonanywhere.com/#organization" },
+                "inLanguage": "en",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "https://tancannon2003.pythonanywhere.com/search?q={search_term_string}",
+                    "query-input": "required name=search_term_string"
+                }
+                },
+
+                {
+                "@type": "WebPage",
+                "@id": "{{ request.base_url }}#webpage",
+                "url": "{{ request.base_url }}",
+                "name": "{{params["website_name"]}}",
+                "isPartOf": { "@id": "https://tancannon2003.pythonanywhere.com/#website" },
+                "inLanguage": "en"
+                }
+
+            ]
+        }
+    </script>
+
+
+    <!--add any required headers-->
+    {%block add_headers%}{%endblock add_headers%}
+
+
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NZ92PJR8"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="/">{{params["website_name"]}}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/about">About</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/tools">Tools</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% block rebrand_notice %}
+        {% include "notifications/rebrandBanner.html" %}
+    {% endblock %}
+
+    {% block flash_alert_messages %}
+        {% include "notifications/flashAlertMessage.html" %}
+    {% endblock %}
+
+    <!-- BODY CONTENT HERE -->
+    {% block body %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="border-top">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <!--social media logo-->
+                    <!--<ul class="list-inline text-center">
+                        <li class="list-inline-item">
+                            <a href="{{ params['tw_url'] }}" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+                                    <i class="fab fa-twitter fa-stack-1x fa-inverse" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="{{ params['fb_url'] }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+                                    <i class="fab fa-facebook-f fa-stack-1x fa-inverse" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="{{ params['gh_url'] }}" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+                                    <i class="fab fa-github fa-stack-1x fa-inverse" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>-->
+                    <ul class="list-inline text-center text-responsive">
+                        <li class="list-inline-item">
+                            <a href="/privacy" target="_blank" rel="noopener noreferrer" aria-label="Privacy Policy">Privacy Policy</a>
+                        </li>
+                        <li class="list-inline-item text-responsive">
+                            <a href="/terms" target="_blank" rel="noopener noreferrer" aria-label="Terms of Service">Terms of Service</a>
+                        </li>
+                        <li class="list-inline-item text-responsive">
+                            <a href="/disclaimer" target="_blank" rel="noopener noreferrer" aria-label="Disclaimer">Disclaimer</a>
+                        </li>
+                        <li class="list-inline-item text-responsive">
+                            <a href="/faq" target="_blank" rel="noopener noreferrer" aria-label="FAQ">FAQ</a>
+                        </li>
+
+                    </ul>
+                    <div id="copy-right-label" class="small text-center text-muted fst-italic text-responsive">
+                        &copy; {{ current_year }} tanmayakumarnaik.pythonanywhere.com
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS: defer so it doesn’t block rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}" defer></script>
+</body>
+</html>

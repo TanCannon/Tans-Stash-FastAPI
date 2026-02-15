@@ -1,0 +1,503 @@
+{% extends "layout.html" %}
+
+
+{% set fname = "assets/img/character-counter.png" %}
+{% set ftitle = "Online Character Counter & Word Counter | Free Text Counter Tool" %}
+
+{% set fdescription = "Free online character and word counter. Instantly count characters, words, sentences, and spaces — with saved profiles for custom metrics." %}
+
+{% set ftagline = "A free character counter that remembers how you count." %}
+
+
+
+
+{% block title %}
+{{ftitle}}
+{% endblock %}
+
+{% block meta_description %}
+{{fdescription}}
+{% endblock %}
+
+{% block og_title %}{{ftitle}}{% endblock %}
+{% block og_description %}{{ fdescription }}{% endblock %}
+{% block og_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+
+{% block twitter_title %}{{ ftitle }}{% endblock %}
+{% block twitter_description %}{{ fdescription }}{% endblock %}
+{% block twitter_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+
+{% block page_style %}
+{{url_for('static', filename='css/characterCounter.css')}}
+{% endblock page_style %}
+
+{%block add_headers%}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.css" media="print"
+  onload="this.media='all'">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/theme/material.css" media="print"
+  onload="this.media='all'">
+
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/javascript/javascript.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/display/placeholder.js" defer></script>
+
+<script src="{{ url_for('static', filename='js/mydropdown.js') }}" defer></script>
+<link rel="stylesheet" href="{{url_for('static', filename='css/mydropdown.css')}}">
+
+{% endblock %}
+
+{% block body %}
+<template id="preference-template">
+  <div class="list-items border-bottom">
+    <p class="item-name" data-type="">Preference</p>
+
+    <!-- Edit Button -->
+    <button class="edit-preference copy-btn" title="Edit">
+      <img 
+        src="{{ url_for('static', filename='/assets/icons/edit.svg') }}" 
+        alt="Edit" 
+        class="icon"
+      >
+    </button>
+
+    <!-- Delete Button -->
+    <button class="delete-preference copy-btn" title="Delete">
+      <img 
+        src="{{ url_for('static', filename='/assets/icons/delete.svg') }}" 
+        alt="Delete" 
+        class="icon"
+      >
+    </button>
+  </div>
+</template>
+
+
+
+<template id="edit-template">
+  <div class="dropdown-content submenu" id="submenu">
+    <button class="back-btn copy-btn">⬅ Back</button>
+    <span id="item-name"><strong>Preference 1 Edit</strong></span>
+    <form id="optionsForm" class="options-form">
+      <label for="ccmin">Characters:</label>
+      <input type="number" id="ccmin" name="ccmin" min="0" step="1" placeholder="min" value="0">
+      <input type="number" id="ccmax" name="ccmax" min="0" step="1" placeholder="max" value="1">
+
+      <label for="wcmin">Words:</label>
+      <input type="number" id="wcmin" name="wcmin" min="0" step="1" placeholder="min" value="0">
+      <input type="number" id="wcmax" name="wcmax" min="0" step="1" placeholder="max" value="1">
+
+      <label for="scmin">Spaces:</label>
+      <input type="number" id="scmin" name="scmin" min="0" step="1" placeholder="min" value="0">
+      <input type="number" id="scmax" name="scmax" min="0" step="1" placeholder="max" value="1">
+
+      <label for="stcmin">Sentences:</label>
+      <input type="number" id="stcmin" name="stcmin" min="0" step="1" placeholder="min" value="0">
+      <input type="number" id="stcmax" name="stcmax" min="0" step="1" placeholder="max" value="1">
+
+      <label for="pcmin">Paragraphs:</label>
+      <input type="number" id="pcmin" name="pcmin" min="0" step="1" placeholder="min" value="0">
+      <input type="number" id="pcmax" name="pcmax" min="0" step="1" placeholder="max" value="1">
+
+      <label for="rtmin">Reading time:</label>
+      <input type="number" id="rtmin" name="rtmin" min="0" step="1" placeholder="min" value="0">
+      <input type="number" id="rtmax" name="rtmax" min="0" step="1" placeholder="max" value="1">
+
+      <button type="submit" class="submit-btn copy-btn">Save</button>
+    </form>
+  </div>
+</template>
+
+<header class="masthead" style="background-image: url('{{url_for('static', filename=fname)}}')">
+  <div class="container position-relative px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+      <div class="col-md-10 col-lg-8 col-xl-7">
+        <div class="post-heading">
+          <!-- <h1>Man must explore, and this is exploration at its greatest</h1> -->
+          <!-- i accssing these lines from python file in post_rout() -->
+          <h1>{{ftitle}}</h1>
+          <h2 class="subheading">{{ftagline}}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!--main content-->
+<div id="dualeditor">
+  <div class="editor">
+    <div class="editor-label">
+      <h3>WorkSpace</h3>
+      <!-- control buttons -->
+      <div id="control-btn" class="d-flex align-items-center column-gap-3">
+        <!--Preference bnt -->
+        <div class="dropdown editor-label" id="dropdown">
+          <span id="dropdown-toggle" class="dropdown-toggle noclick"><strong>Profile</strong></span>
+          <div id="list-container">
+            <!-- Main dropdown content-->
+            <div id="preference-list">
+              <code>Saving mulitple preferences coming soon...</code>
+            </div>
+            <div>
+              <button class="add-preference copy-btn" id="add-preference-button">✚</button>
+            </div>
+          </div>
+          <!-- Add Submenus -->
+          <div class="dropdown-content submenu" id="submenu-add">
+            <button class="back-btn copy-btn">⬅ Back</button>
+            <span><strong>Add</strong></span>
+            <form id="add-form" class="add-form">
+              <label for="pname">Name:</label>
+              <input type="text" id="pname" name="pname" placeholder="" value="">
+              <label for="add-ccmin">Characters:</label>
+              <input type="number" id="add-ccmin" name="add-ccmin" min="0" step="1" placeholder="min" value="0">
+              <input type="number" id="add-ccmax" name="add-ccmax" min="0" step="1" placeholder="max" value="">
+
+              <label for="add-wcmin">Words:</label>
+              <input type="number" id="add-wcmin" name="add-wcmin" min="0" step="1" placeholder="min" value="0">
+              <input type="number" id="add-wcmax" name="add-wcmax" min="0" step="1" placeholder="max" value="">
+
+              <label for="add-scmin">Spaces:</label>
+              <input type="number" id="add-scmin" name="add-scmin" min="0" step="1" placeholder="min" value="0">
+              <input type="number" id="add-scmax" name="add-scmax" min="0" step="1" placeholder="max" value="">
+
+              <label for="add-stcmin">Sentences:</label>
+              <input type="number" id="add-stcmin" name="add-stcmin" min="0" step="1" placeholder="min" value="0">
+              <input type="number" id="add-stcmax" name="add-stcmax" min="0" step="1" placeholder="max" value="">
+
+              <label for="add-pcmin">Paragraphs:</label>
+              <input type="number" id="add-pcmin" name="add-pcmin" min="0" step="1" placeholder="min" value="0">
+              <input type="number" id="add-pcmax" name="add-pcmax" min="0" step="1" placeholder="max" value="">
+
+              <label for="add-rtmin">Reading time:</label>
+              <input type="number" id="add-rtmin" name="add-rtmin" min="0" step="1" placeholder="min (in sec)" value="0">
+              <input type="number" id="add-rtmax" name="add-rtmax" min="0" step="1" placeholder="max (in sec)" value="">
+
+              <button type="submit" class="submit-btn copy-btn">Save</button>
+            </form>
+          </div>
+        </div>
+        <!--Toggle Preferences button-->
+        <div>
+          <label for="toggle-preference" class="switch text-responsive">
+            <input type="checkbox" name="toggle-preference" id="toggle-preference" class="chk" role="switch"
+  aria-label="Enable preference">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <!--copy and paste buttons-->
+        <button class="copy-btn" id="copy-btn" data-target="unicodeEditor">Copy</button>
+        <button class="copy-btn" id="paste-btn" data-target="unicodeEditor">Paste</button>
+      </div>
+    </div>
+    <div id="unicodeEditor" class="autoresizeeditor"></div>
+  </div>
+</div>
+<!--show live metices-->
+<div class="center-content-h">
+  <div id="metrics-list" class="px-4">
+    <div class="btn btn-primary mt-2">Characters: <span id="charVal">0</span></div>
+    <div class="btn btn-primary mt-2">Words: <span id="wordVal">0</span></div>
+    <div class="btn btn-primary mt-2">Spaces: <span id="spaceVal">0</span></div>
+    <div class="btn btn-primary mt-2">Sentences: <span id="sentenceVal">0</span></div>
+    <div class="btn btn-primary mt-2">Paragraphs: <span id="paragraphVal">0</span></div>
+    <div class="btn btn-primary mt-2">Reading Time: <span id="readingVal">0 sec</span></div>
+  </div>
+</div>
+
+<div class="d-flex flex-column justify-content-center ">
+  <div class="center-content-h" id="center-user-guide">
+
+    <!-- Quick Start -->
+    <section id="quick-start" class="editor-help">
+      <p class="blurb">
+        <strong>Quick Start:</strong>
+        Type or paste your text into the editor above. All metrics—characters, words, sentences,
+        paragraphs, spaces, and reading time—update instantly. Create profiles to store custom
+        target values and switch between writing styles effortlessly.
+      </p>
+    </section>
+
+    <!-- Why This Tool Is Different -->
+    <section id="why-different" class="editor-help">
+      <h2>Why This Character Counter Is Different</h2>
+
+      <p>
+        Unlike basic counters that show only raw numbers, this tool lets you create
+        <strong>profiles</strong>—saved metric targets for any writing format.
+        Each profile can store:
+      </p>
+
+      <ul>
+        <li>Character limits (e.g., 280 for tweets)</li>
+        <li>Word count ranges (e.g., 800–1200 for blogs)</li>
+        <li>Sentence & paragraph goals</li>
+        <li>Reading-time expectations</li>
+      </ul>
+
+      <p>
+        Switching a profile instantly loads all saved targets—useful for writers,
+        students, editors, SEO professionals, and content creators.
+      </p>
+    </section>
+
+    <!-- How to Use -->
+    <section id="how-to-use" class="editor-help">
+      <h2>How to Use</h2>
+
+      <h3>1. Type or Paste Your Text</h3>
+      <p>
+        The counter updates live. All metrics remain visible so you always know
+        where your content stands.
+      </p>
+
+      <h3>2. Create a Profile</h3>
+      <p>
+        Click the button beside "Profile" to activate the custom feature, click on "Profile" and add your own
+        custom named profiles (e.g., <em>Twitter</em>, <em>Blog Post</em>,
+        <em>SEO Article</em>, <em>Research</em>).
+      </p>
+
+      <h3>3. Set Your Targets</h3>
+      <p>
+        Add custom limits — max characters, ideal word range, paragraph count,
+        and target reading time.
+        The metrics below becomes red when a metric's limits is crossed.
+      </p>
+
+      <h3>4. Save & Reuse</h3>
+      <p>
+        Save your profile. Switch anytime to apply the corresponding goals instantly.
+      </p>
+
+      <h3>5. Auto Load</h3>
+      <p>
+        Your most recently used profile loads automatically when you return.
+      </p>
+
+      <p class="pro-tip">
+        <strong>💡 Pro Tip:</strong>
+        Create different profiles for social media, blogs, SEO posts, academic writing,
+        or assignments so you never need to re-enter limits again.
+      </p>
+    </section>
+
+    <!-- Example Profiles -->
+    <section id="examples" class="editor-help">
+      <h2>Example Profile Setups</h2>
+
+      <pre class="example">
+Social Media:
+- Characters: 280
+- Words: 20–40
+- Paragraphs: 1–2
+- Reading Time: &lt;1 min
+        </pre>
+
+      <pre class="example">
+Blog Article:
+- Words: 800–1200
+- Paragraphs: 4–8
+- Reading Time: 4–7 mins
+        </pre>
+
+      <pre class="example">
+SEO Post:
+- Words: 600–1400
+- Paragraphs: 3–7
+- Reading Time: 3–6 mins
+        </pre>
+
+      <pre class="example">
+Academic Writing:
+- Words: 1000–2500
+- Paragraphs: 6–12
+- Reading Time: 8–15 mins
+        </pre>
+    </section>
+
+    <!-- Benefits -->
+    <section id="benefits" class="editor-help">
+      <h2>Benefits of Profile-Based Counting</h2>
+
+      <ul>
+        <li>No need to remember limits—everything is saved.</li>
+        <li>Instant context-switching between writing styles.</li>
+        <li>Consistent output for blogs, SEO, social media, academics.</li>
+        <li>Perfect for writers, students, editors, and creators.</li>
+      </ul>
+    </section>
+
+  </div>
+
+</div>
+
+</div>
+<script>
+
+  function debounce(fn, delay) {
+    let timer;
+    return function (...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+  }
+  function inRange(value, min, max) {
+    return value >= min && value <= max;
+  }
+  function analyzeText(text) {
+    // Trim just for clean calculations
+    const trimmed = text.trim();
+
+    const characters = text.length;
+    const spaces = (text.match(/ /g) || []).length;
+
+    const words = trimmed ? trimmed.split(/\s+/).length : 0;
+
+    const sentences = trimmed ? (trimmed.match(/[.!?]+/g) || []).length : 0;
+
+    // Paragraphs = blocks of text separated by blank lines
+    const paragraphs = trimmed ? trimmed.split(/\n\s*\n/).length : 0;
+
+    // Average reading speed: ~200 words per minute
+    const readingTimeMinutes = words / 200;
+    const readingTime = Math.ceil(readingTimeMinutes * 60); //in seconds
+    // const readingTime = readingTimeMinutes < 1
+    //  ? `${Math.ceil(readingTimeMinutes * 60)} sec`
+    // : `${readingTimeMinutes.toFixed(1)} min`;
+
+    return {
+      characters,
+      words,
+      spaces,
+      sentences,
+      paragraphs,
+      readingTime
+    };
+  }
+
+  //wrapping inside window event to wait for js for CodeMirror to load.    
+  window.addEventListener("DOMContentLoaded", () => {
+    // Create editors
+    const unicodeBox = CodeMirror(document.getElementById("unicodeEditor"), {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: "text/plain",
+      theme: "material",
+      value: "",
+      placeholder: "Type here..."
+    });
+    // 🔹 Accessibility fix for hidden CodeMirror textarea
+    const cmInput = unicodeBox.getInputField();
+    cmInput.setAttribute("aria-hidden", "true");
+    cmInput.setAttribute("role", "presentation");
+    cmInput.setAttribute("tabindex", "-1");
+    //the toggle preference button instance
+    //SET INITIAL STATES
+    const dropdownToggleBtn = document.getElementById("dropdown-toggle");
+    if (document.getElementById("toggle-preference").checked) {
+      dropdownToggleBtn.classList.remove("noclick");
+      //set prftogglebtn to active
+      dropdownToggleBtn.style.color = "black";
+    }
+
+    const handleUnicode = debounce((instance, changeObj) => {
+      const stats = analyzeText(unicodeBox.getValue());
+      const liveMetrices = document.querySelectorAll("#metrics-list > div");
+      //reset liveMetrices styles.
+      liveMetrices.forEach(item => {
+        item.style.backgroundColor = "#0085A1";
+      });
+
+      //validate the text according to the preferences (if toggle preference button is ON)
+      if (document.getElementById("toggle-preference").checked) {
+
+        //console.log("Preference is On.");
+        if (localStorage.getItem("selectedPreference")) { //preference is set!?
+          //bring values from the selectedPreference.
+          const menuData = JSON.parse(localStorage.getItem("menuData"));
+          const selectedPreferenceId = localStorage.getItem("selectedPreference");
+          const ruleSet = menuData[selectedPreferenceId].children; //it is a array
+          //then validate 
+          const formFields = [["ccmin", "ccmax"], ["wcmin", "wcmax"], ["scmin", "scmax"], ["stcmin", "stcmax"], ["pcmin", "pcmax"], ["rtmin", "rtmax"]];
+
+          const curStats = Object.values(stats);
+          //console.log(values[0]);
+          
+          formFields.forEach((item, index) => {
+            console.log(item, curStats[index], Number(ruleSet[index + index][item[0]]), Number(ruleSet[index + index + 1][item[1]]));
+            if (!inRange(curStats[index], Number(ruleSet[index + index][item[0]]), Number(ruleSet[index + index + 1][item[1]]))) {
+              liveMetrices[index].style.backgroundColor = "red";
+            }
+          });
+        }
+      }
+      //show metices
+      document.getElementById("charVal").textContent = stats.characters;
+      document.getElementById("spaceVal").textContent = stats.spaces;
+      document.getElementById("wordVal").textContent = stats.words;
+      document.getElementById("sentenceVal").textContent = stats.sentences;
+      document.getElementById("paragraphVal").textContent = stats.paragraphs;
+      document.getElementById("readingVal").textContent = `${stats.readingTime} sec`;
+    }, 300);
+
+    unicodeBox.on("change", handleUnicode);
+
+    // Highlight on focus
+    unicodeBox.on("focus", () => {
+      unicodeBox.getWrapperElement().classList.add("cm-editor-active");
+    });
+
+    // Remove highlight if both lose focus (optional)
+    [unicodeBox].forEach(editor => {
+      editor.on("blur", () => {
+        setTimeout(() => {
+          if (
+            !document.activeElement.closest(".CodeMirror")
+          ) {
+            editor.getWrapperElement().classList.remove("cm-editor-active");
+          }
+        }, 100);
+      });
+    });
+
+    // Copy buttons
+    async function copyToClipboard(target) {
+      const text = unicodeBox.getValue();
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (err) {
+        console.error("Failed to copy:", err);
+        alert("Failed to copy");
+      }
+    }
+    //preference toggle button
+    document.getElementById("toggle-preference").addEventListener('change', () => {
+      dropdownToggleBtn.style.color = (dropdownToggleBtn.style.color === "black") ? "grey" : "black";
+      dropdownToggleBtn.classList.toggle("noclick");
+    });
+
+    //copy buttons
+    document.getElementById("copy-btn").addEventListener("click", function () {
+      const target = this.getAttribute("data-target");   // this = button element
+      copyToClipboard(target);
+      this.textContent = "Copied!";
+      setTimeout(() => this.textContent = "Copy", 1200);
+    });
+
+    //paste btn
+    document.getElementById("paste-btn").addEventListener("click", function () {
+      navigator.clipboard.readText()
+        .then(text => {
+          unicodeBox.setValue(text); // paste into input/textarea
+          this.textContent = "Pasted!";
+          setTimeout(() => this.textContent = "Paste", 1200);
+        })
+        .catch(err => {
+          console.error("Clipboard read error:", err);
+          this.textContent = "Failed to paste!";
+          setTimeout(() => this.textContent = "Paste", 1200);
+        });
+    });
+  });
+</script>
+
+{% endblock %}

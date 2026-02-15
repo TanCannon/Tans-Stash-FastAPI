@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+
+{% set fname =  'assets/img/about-bg' %}
+
+{% block page_style %}{{url_for('static', filename='css/about.css')}}{% endblock page_style %}
+{% block title %}About | {{params['website_name']}}{% endblock %}
+
+{%block add_headers%}
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "BreadcrumbList",
+                    "@id": "{{ request.base_url }}#breadcrumb",
+                    "itemListElement": [
+                        {"@type": "ListItem","position": 1,"name": "Home","item": "https://tancannon2003.pythonanywhere.com/"},
+                        {"@type": "ListItem","position": 2,"name": "About","item": "{{ request.url }}"}
+                    ]
+                },
+                {
+                    "@type": "AboutPage",
+                    "@id": "{{ request.base_url }}#about",
+                    "url": "{{ request.url }}",
+                    "name": "About {{params["website_name"]}}",
+                    "description": "Learn more about {{params["website_name"]}}, its creator Tanmaya Kumar Naik, and the mission behind the platform.",
+                    "isPartOf": {"@id": "https://tancannon2003.pythonanywhere.com/#website"},
+                    "publisher": {"@id": "https://tancannon2003.pythonanywhere.com/#organization"},
+                    "inLanguage": "en"
+                }
+            ]
+        }
+    </script>
+
+{%endblock add_headers%}
+
+{% block body %}
+
+<!-- Page Header-->
+<header class="masthead">
+    <picture>
+            <!-- Modern WebP -->
+            <source 
+                srcset="{{ url_for('static', filename=fname + '-400.webp') }} 400w,
+                        {{ url_for('static', filename=fname + '-800.webp') }} 800w,
+                        {{ url_for('static', filename=fname + '-1200.webp') }} 1200w"
+                sizes="100vw"
+                type="image/webp">
+
+            <!-- JPEG fallback -->
+            <source 
+                srcset="{{ url_for('static', filename=fname + '-400.jpg') }} 400w,
+                        {{ url_for('static', filename=fname + '-800.jpg') }} 800w,
+                        {{ url_for('static', filename=fname + '-1200.jpg') }} 1200w"
+                sizes="100vw"
+                type="image/jpeg">
+
+            <!-- Default fallback -->
+            <img 
+                src="{{ url_for('static', filename=fname + '-800.jpg') }}"
+                sizes="100vw"
+                alt="home-page-banner"
+                class="header-img"
+                fetchpriority="high"
+                decoding="async"
+                loading="eager">
+        </picture>
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="page-heading">
+                    <h1>About Me</h1>
+                    <span class="subheading">This is what I do.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Main Content-->
+<main class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <p>Welcome to The <b>{{params["website_name"]}}</b>! I'm <b>Tanmaya Kumar Naik</b> (yeah thus the website name, it ain't rac*st), a
+                    passionate tech enthusiast and writer dedicated to
+                    exploring the latest innovations and trends in the world
+                    of technology. With a background in <b>Computer Science
+                        and Engineering </b>(yeah it was necessary to tell 😅 alt="a nervous face"), I've always been fascinated by
+                    how technology shapes our lives and transforms
+                    industries.</p>
+
+                <p>My journey into the world of tech began with a simple
+                    curiosity about how things work (obviously... the same story of every little kid but please read further...), which quickly evolved
+                    into a deep passion for understanding and sharing the
+                    latest advancements.From groundbreaking AI developments
+                    and the rise of quantum computing to the transformative
+                    power of AR and VR (well uhh.. mostly I had done a lot of experimentation lately in robotics and web development but it's fare to write about latest technologies too, gives me the chill..🤯), I aim to bring you insightful,
+                    well-researched content that delves (meaning reach inside a receptable ("receptable" means a hollow object used to contain something) and search for something new, okay thanks google.com) into the future of
+                    innovation.</p>
+
+                <p>At {{params["website_name"]}}, I strive to make complex technological
+                    concepts accessible to everyone, whether you're a
+                    seasoned tech professional or just beginning to explore
+                    this ever-evolving field (or yeah a student just like me!! 🤗). My goal is to inspire, inform,
+                    and engage you with articles that not only highlight the
+                    latest trends but also explore their potential impact on
+                    our world.</p>
+
+                <p>Join me as we embark on this journey through the
+                    cutting-edge world of technology. Let's explore, learn,
+                    and stay ahead of the curve together!</p>
+
+                <p>Feel free to connect with me on socila media or
+                    drop a message via email on my <a href="https://tanmayakumarnaik.pythonanywhere.com" target="_blank">portpholio</a> (uhh.. yeah I use pythonanywhere a lot, guess I wanna be a python developer). I'm always
+                    excited to hear from fellow tech enthusiasts and curious
+                    minds! Do share your queries on the <a href="/contact" target="_blank">contact page.</a></p>.
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

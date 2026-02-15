@@ -1,0 +1,134 @@
+{% extends "layout.html" %}
+
+
+{% set fname =  "assets/img/asciitree-1200.jpg" %}
+{% set ftitle =  "ASCII Tree to Folder | Generate & Download ZIP Online" %}
+{% set fdescription =  "Easily convert ASCII tree structures into real folders and download them as ZIP files. Fast, simple, and efficient folder generator tool online." %}
+{% set ftagline =  "Turn ASCII trees into real folders, download instantly as ZIP." %}
+
+
+{% block title %}
+{{ftitle}}
+{% endblock %}
+
+{% block meta_description %}
+{{fdescription}}
+{% endblock %}
+
+{% block og_title %}{{ftitle}}{% endblock %}
+{% block og_description %}{{ fdescription }}{% endblock %}
+{% block og_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+
+{% block twitter_title %}{{ ftitle }}{% endblock %}
+{% block twitter_description %}{{ fdescription }}{% endblock %}
+{% block twitter_image %}{{ url_for('static',filename=fname,  _external=True)}}{% endblock %}
+
+{% block page_style %}
+{{url_for('static', filename='css/generateZip.css')}}
+{% endblock page_style %}
+
+{%block add_headers%} 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/theme/material.css" media="print" onload="this.media='all'">
+
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/javascript/javascript.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/display/placeholder.js" defer></script>
+
+{% endblock %}
+
+{% block body %}
+   <header class="masthead" style="background-image: url('{{url_for('static', filename='assets/img/asciitree.png')}}')">
+    <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <!-- <h1>Man must explore, and this is exploration at its greatest</h1> -->
+                            <!-- i accssing these lines from python file in post_rout() -->
+                            <h1>{{ftitle}}</h1>
+                            <h2 class="subheading">{{ftagline}}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+   </header>
+    <!--main content-->
+    <div id="dualeditor">
+        <div class="editor">
+            <div class="editor-label">
+                <span>Unicode Style</span>
+                <div>
+                    <span><a href="{{url_for('contact.contact')}}"><u  class="text-orange">"Report an issue"</u></a></span>
+                    <button class="copy-btn" data-target="unicodeEditor">Copy</button>
+                </div>
+            </div>
+            <div id="unicodeEditor" class="autoresizeeditor"></div>
+        </div>
+
+        <div class="editor">
+            <div class="editor-label">
+                <span>ASCII Style</span>
+                <button class="copy-btn" data-target="asciiEditor">Copy</button>
+            </div>
+            <div id="asciiEditor" class="autoresizeeditor"></div>
+        </div>
+    </div>
+    <div class="center-content-h">
+    {# With Blueprints, url_for() uses "<blueprint_name>.<function_name>" #}
+        <form id="treeForm" method="POST" action="{{ url_for('ascii_tree_to_zip_api.ascii_tree_to_zip_download') }}">
+                        <!-- hidden input where we put editor content -->
+                        <textarea id="unicodeHidden" name="unicodeContent" hidden></textarea>
+                        <button type="submit" id="submit-btn" class="btn btn-primary">Generate ZIP</button>
+        </form>
+    </div>
+    <div class="center-content-h" id="center-user-guide">
+        <section id="quick-start" class="editor-help">
+            <p class="blurb">
+                <strong>Quick Start:</strong>
+                Type your folder tree in the <em>ASCII editor</em> (keyboard symbols: <code>|</code>, <code>-</code>, <code>`</code>)
+                or paste an existing Unicode tree in the <em>Unicode editor</em>. Both editors sync and preview each other.
+                When ready, click <strong>Generate ZIP</strong> to download your folder structure as real folders.
+            </p>
+        </section>
+
+        <section id="detailed-guide" class="editor-help">
+            <h2>How to Use the Editors</h2>
+            <p>This platform provides <strong>two editors</strong> to help you create, paste, or edit folder tree structures and convert them into real folders.</p>
+
+            <h3>1. ASCII Editor (Recommended)</h3>
+            <p>Use the ASCII editor if you are <strong>typing</strong> your folder structure. It supports only symbols available on your keyboard: <code>|</code>, <code>-</code>, <code>`</code>.</p>
+            <pre aria-label="ASCII example" class="example">
+            project/
+            |-- src/
+            |   |-- main.py
+            |   `-- utils.py
+            `-- README.md</pre>
+
+            <h3>2. Unicode Editor</h3>
+            <p>Use the Unicode editor if you are <strong>pasting</strong> a folder structure written with Unicode tree symbols.</p>
+            <pre aria-label="Unicode example" class="example">
+            project/
+            ├─ docs/
+            ├─ src/
+            │  ├─ main.py
+            │  └─ utils.py
+            └─ README.md</pre>
+
+            <h3>3. Edit in Either Format</h3>
+            <p>Both editors are <strong>linked</strong>: you can type in ASCII and see the Unicode preview, or paste in Unicode and refine it in ASCII.</p>
+
+            <h3>4. Generate and Download</h3>
+            <p>Review your structure for accuracy. Click <strong>“Generate ZIP”</strong> to create and download your folder structure as a real, ready-to-use ZIP file.</p>
+
+            <p class="pro-tip"><strong>💡 Pro Tip:</strong> Use this tool in your documentation or workflow to quickly turn ASCII or Unicode folder trees into real project folders—perfect for sharing setups, tutorials, or boilerplates.</p>
+        </section>
+    </div>
+
+    <!-- Your JS (always after CDNs) -->
+    <script type="module" src="{{url_for('static', filename='js/generateZip.js')}}" defer></script>
+
+{# <script>
+    
+</script> #}
+    
+{% endblock %}

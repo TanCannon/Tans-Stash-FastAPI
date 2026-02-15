@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{% set fname =  "assets/img/about-bg.jpg" %}
+{% set ftitle = "FAQ | " ~ params['website_name'] %}
+{% set fdescription =  "Get help using " ~ params['website_name'] ~ " tools and learn about our policies, privacy, and updates. Frequently asked questions answered." %}
+
+{% block title %}
+{{ftitle}}
+{% endblock %}
+
+{% block meta_description %}
+{{fdescription}}
+{% endblock %}
+
+{% block og_title %}{{ftitle}}{% endblock %}
+{% block og_description %}{{ fdescription }}{% endblock %}
+{% block og_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+
+{% block twitter_title %}{{ ftitle }}{% endblock %}
+{% block twitter_description %}{{ fdescription }}{% endblock %}
+{% block twitter_image %}{{ url_for('static',filename=fname,  _external=True)}}{% endblock %}
+
+{% block page_style %}
+{{url_for('static', filename='css/about.css')}}
+{% endblock page_style %} 
+
+{%block add_headers%}
+    <meta name="robots" content="noindex, follow">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "BreadcrumbList",
+                    "@id": "{{ request.base_url }}#breadcrumb",
+                    "itemListElement": [
+                        {"@type": "ListItem","position": 1,"name": "Home","item": "https://tancannon2003.pythonanywhere.com/"},
+                        {"@type": "ListItem","position": 2,"name": "FAQ","item": "{{ request.url }}"}
+                    ]
+                },
+                {
+                    "@type": "FAQPage",
+                    "@id": "{{ request.base_url }}#faq",
+                    "url": "{{ request.url }}",
+                    "name": "Frequently Asked Questions",
+                    "description": "Find answers to common questions about {{params["website_name"]}} and its services.",
+                    "isPartOf": {"@id": "https://tancannon2003.pythonanywhere.com/#website"},
+                    "publisher": {"@id": "https://tancannon2003.pythonanywhere.com/#organization"},
+                    "inLanguage": "en"
+                }
+            ]
+        }
+    </script>
+
+{%endblock add_headers%}
+
+{% block body %}
+
+<!-- Page Header-->
+<header class="masthead"
+    style="background-image: url('{{url_for('static', filename='assets/img/about-bg.jpg')}}')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="page-heading">
+                    <h1>Frequently Asked Questions</h1>
+                    <span class="subheading">Last Updated: October 2025</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Main Content-->
+<main class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="container">
+                    <!-- <h1>Frequently Asked Questions</h1> -->
+
+                    <h2>1. What is {{params['website_name'] }}?</h2>
+                    <p><strong>{{params['website_name'] }}</strong> is a technology blog by <strong>Tanmaya Kumar Naik</strong>, featuring articles on programming, software development, and emerging tech. It also hosts useful online tools.</p>
+
+                    <h2>2. Are the tools free to use?</h2>
+                    <p>Yes — all tools on <strong>{{params['website_name'] }}</strong> are free for personal and educational use. However, please avoid automated or bulk use that may overload the server.</p>
+
+                    <h2>3. Do you store my input data?</h2>
+                    <p>No. Inputs provided to the tools are processed temporarily in memory and not saved to our database unless explicitly stated.</p>
+
+                    <h2>4. Can I share your blog posts or tools?</h2>
+                    <p>Yes, you may share links to our content with proper credit. Republishing entire articles or hosting copies of tools is not allowed without permission.</p>
+
+                    <h2>5. How can I contact you?</h2>
+                    <p>You can reach out through the <a href="{{ url_for('contact.contact') }}">Contact Page</a> for feedback, collaboration, or queries.</p>
+
+                    <h2>6. How often is the content updated?</h2>
+                    <p>We regularly publish new articles and tool updates. Check back often or follow us on social platforms for updates.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </main>
+{% endblock %}

@@ -1,0 +1,69 @@
+{# <style>
+    .bg-f1eee8 {
+        background: #f1eee8;
+    }
+
+    .p-1 {
+        padding: 1rem;
+    }
+
+    .comment {
+        border-left: 2px solid #ddd;
+        padding-left: 10px;
+        margin-bottom: 10px;
+    }
+
+    .replies {
+        margin-left: 20px;
+    }
+
+    .comment_form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn {
+        font-size: clamp(0.8rem, 1.8vw, 1rem);
+        padding: 0.3em 0.8em;
+        border: none;
+        font-weight: bold;
+        border-radius: 4px;
+        cursor: pointer;
+        background-color: #0085A1;
+        border-color: #0085A1;
+        color: white;
+        transition: background 0.2s;
+    }
+
+    .btn:hover {
+        background-color: #007189;
+        border-color: #006a81;
+    }
+
+    .btn:active {
+        background-color: #006a81;
+        border-color: #006479;
+    }
+</style> #}
+
+<section id="comments-section" class="bg-f1eee8 p-1 border border-radius-1"  data-content-type="{{ content_type }}"
+     data-content-id="{{ content_id | default('') }}">
+    <h3>Comments</h3>
+
+    <div id="comments-container"></div>
+
+    <div id="pagination">
+    <button id="prevBtn" disabled>Previous</button>
+    <span id="pageInfo"></span>
+    <button id="nextBtn" disabled>Next</button>
+    </div>
+
+    <h4>Add a comment</h4>
+    <form id="comment-form" class="comment_form">
+        <input type="text" id="author_name" placeholder="Your name" required>
+        <input type="email" id="author_email" placeholder="Your email (optional)">
+        <textarea id="comment_text" placeholder="Write a comment..." required></textarea>
+        <button type="submit" class="btn">Submit</button>
+    </form>
+</section>

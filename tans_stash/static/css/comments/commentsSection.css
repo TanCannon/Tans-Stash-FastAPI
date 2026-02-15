@@ -1,0 +1,52 @@
+.bg-f1eee8 {
+    background: #f1eee8;
+}
+
+.p-1 {
+    padding: 1rem;
+}
+
+.comment {
+    border-left: 2px solid;
+    padding-left: 10px;
+    margin-bottom: 10px;
+}
+
+.replies {
+    margin-left: 20px;
+}
+
+.comment_form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.btn {
+    font-size: clamp(0.8rem, 1.8vw, 1rem);
+    padding: 0.3em 0.8em;
+    border: none;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #0085A1;
+    border-color: #0085A1;
+    color: white;
+    transition: background 0.2s;
+}
+
+.btn:hover {
+    background-color: #007189;
+    border-color: #006a81;
+}
+
+.btn:active {
+    background-color: #006a81;
+    border-color: #006479;
+}
+.border{
+    border: solid;
+}
+.border-radius-1{
+    border-radius: 1em;
+}

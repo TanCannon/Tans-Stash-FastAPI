@@ -1,0 +1,82 @@
+<!-- Flash Notification Banner -->
+<div id="flash-banner" style="display:none;">
+  <span id="flash-message"></span>
+  <button id="flash-close" aria-label="Dismiss notification">✕</button>
+</div>
+
+<style>
+  #flash-banner {
+    font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    position: fixed;
+    top: 20px; /* change to bottom if you want it below */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #28a745; /* default success color */
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 14px;
+    z-index: 9999;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    max-width: 90%;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  #flash-banner button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.8;
+  }
+
+  #flash-banner button:hover {
+    opacity: 1;
+  }
+
+  /* Different colors based on category */
+  #flash-banner.success { background: #28a745; }  /* green */
+  #flash-banner.danger { background: #dc3545; }   /* red */
+  #flash-banner.warning { background: #ffc107; color: #212529; } /* yellow */
+  #flash-banner.info { background: #17a2b8; }     /* blue */
+
+  @media (max-width: 480px) {
+    #flash-banner {
+      font-size: 13px;
+      padding: 10px 14px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const banner = document.getElementById("flash-banner");
+    const messageSpan = document.getElementById("flash-message");
+    const closeBtn = document.getElementById("flash-close");
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          messageSpan.textContent = "{{ message }}";
+          banner.classList.add("{{ category }}");
+          banner.style.display = "flex";
+
+          // auto-dismiss after 4 seconds
+          setTimeout(() => {
+            banner.style.opacity = "0";
+            setTimeout(() => { banner.style.display = "none"; }, 300);
+          }, 4000);
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    closeBtn.addEventListener("click", function () {
+      banner.style.opacity = "0";
+      setTimeout(() => { banner.style.display = "none"; }, 300);
+    });
+  })();
+</script>

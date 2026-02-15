@@ -1,0 +1,165 @@
+{% extends "layout.html" %}
+
+{% set fname =  'assets/img/home-bg' %}
+
+{% block title %}Home | {{params['website_name']}}{% endblock %}
+{% block meta_description %}{{params['website_description']}}{% endblock %}
+
+{% block og_title %}{{params['website_name'] }} | Home{% endblock %}
+{% block og_description %}{{params['website_description']}}{% endblock %}
+{% block og_image %}{{ url_for('static',filename='assets/img/home-bg.jpg', _external=True)}}{% endblock %}
+
+{% block twitter_title %}{{params['website_name'] }} | Home{% endblock %}
+{% block twitter_description %}{{params['website_description']}}{% endblock %}
+{% block twitter_image %}{{ url_for('static',filename='assets/img/home-bg.jpg',  _external=True)}}{% endblock %}
+
+{% block page_style %}{{url_for('static', filename='css/index.css')}}{% endblock page_style %}
+
+{%block add_headers%}
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+
+                {
+                    "@type": "BreadcrumbList",
+                    "@id": "{{ request.base_url }}#breadcrumb",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": "https://tancannon2003.pythonanywhere.com/"
+                        }
+                    ]
+                },
+
+                {
+                    "@type": "WebPage",
+                    "@id": "{{ request.base_url }}#home",
+                    "url": "{{ request.url }}",
+                    "name": "{{ params['website_name'] }} - Home",
+                    "description": "Explore {{ params['website_name'] }} – a blog and tool hub by Tanmaya Kumar Naik, covering the latest in technology, software development, and automation. Discover insightful articles and free online tools.",
+                    "isPartOf": { "@id": "https://tancannon2003.pythonanywhere.com/#website" },
+                    "publisher": { "@id": "https://tancannon2003.pythonanywhere.com/#organization" },
+                    "inLanguage": "en",
+                    "primaryImageOfPage": {
+                        "@type": "ImageObject",
+                        "url": "{{params['favicon_url']}}",
+                        "width": 512,
+                        "height": 512
+                    },
+                    "potentialAction": {
+                        "@type": "SearchAction",
+                        "target": "https://tancannon2003.pythonanywhere.com/search?q={search_term_string}",
+                        "query-input": "required name=search_term_string"
+                    }
+                },
+
+                {
+                    "@type": "ItemList",
+                    "@id": "{{ request.base_url }}#featured-content",
+                    "name": "Featured Posts and Tools",
+                    "description": "A curated list of featured blog posts and online tools available on {{ params['website_name'] }}.",
+                    "itemListElement": [
+                        {% for post in posts[:5] %}
+                        {
+                            "@type": "ListItem",
+                            "position": {{ loop.index }},
+                            "url": "https://tancannon2003.pythonanywhere.com/blog/{{ post.slug }}",
+                            "name": "{{ post.title | e }}"
+                        }{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                    ]
+                }
+
+            ]
+        }
+    </script>
+
+{%endblock add_headers%}
+
+{% block body %}
+        <!-- Page Header-->
+        <header class="masthead">
+            <picture>
+            <!-- Modern WebP -->
+            <source 
+                srcset="{{ url_for('static', filename=fname + '-400.webp') }} 400w,
+                        {{ url_for('static', filename=fname + '-800.webp') }} 800w,
+                        {{ url_for('static', filename=fname + '-1200.webp') }} 1200w"
+                sizes="100vw"
+                type="image/webp">
+
+            <!-- JPEG fallback -->
+            <source 
+                srcset="{{ url_for('static', filename=fname + '-400.jpg') }} 400w,
+                        {{ url_for('static', filename=fname + '-800.jpg') }} 800w,
+                        {{ url_for('static', filename=fname + '-1200.jpg') }} 1200w"
+                sizes="100vw"
+                type="image/jpeg">
+
+            <!-- Default fallback -->
+            <img 
+                src="{{ url_for('static', filename=fname + '-800.jpg') }}"
+                sizes="100vw"
+                alt="home-page-banner"
+                class="header-img"
+                fetchpriority="high"
+                decoding="async"
+                loading="eager">
+        </picture>
+            <!-- <header class="masthead" style="background-image: url('{{url_for('static', filename='assets/img/home-bg.jpg')}} ')"></header> -->
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="site-heading">
+                            <!-- i am using the config.json file to get these values and using it here by jinjer templating -->
+                            <h1>{{params['website_name']}}</h1>
+                            <h2 class="subheading">Tools, Tips & Tech Insights</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Main Content-->
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                {% include "components/SearchBar.html" %}
+
+                    <!-- Post preview-->
+                    <!--Todo: fetch it using for loop from the database-->
+                    <!-- variable "posts" is passed in def home() -->
+                    {% for post in posts %} <!--for loop in jinga-->
+                        <!-- <li><a href="/post/{{ post.slug }}">{{post.title}}</a> -->
+                        <div class="post-preview">
+                            <a href="/blog/{{post.slug}}"> 
+                                <h2 class="post-title">{{post.title}}</h2>
+                                <h3 class="post-subtitle">{{post.tag_line}}</h3>
+                            </a>
+                            <!-- <p class="post-meta">
+                                Posted by
+                                <a href="#!">Start Bootstrap</a>
+                                on {{post.date}}
+                            </p> -->
+                            <p class="post-meta">
+                                Posted on {{post.date | human_date }}
+                            </p>
+                        </div>
+                        <!--{{post.content[0:150]|safe}}...-->
+                    {% endfor %}
+
+
+                    
+                    <hr class="my-4" />
+                    <!-- Pager-->
+                    
+                    <!-- <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div> -->
+                    <div class="d-flex justify-content-between mb-4">
+                        <div class="btn btn-primary text-uppercase nav-button"><a href="{{prev}}">← Previous</a></div>
+                        <div class="btn btn-primary text-uppercase nav-button"><a href="{{next}}">Older Posts →</a></div>
+                </div>
+            </div>
+        </div>
+{% endblock %}    

@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+{% block page_style %}{{url_for('static', filename='css/styles.css')}}{% endblock page_style %}
+{% block title %}{{ params["website_name"] }} | Analytics | Dashboard {% endblock %}
+
+{% block body %}
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('{{url_for('static', filename='assets/img/home-bg.jpg')}}')">
+            <!-- <header class="masthead" style="background-image: url('{{url_for('static', filename='assets/img/home-bg.jpg')}} ')"></header> -->
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="site-heading">
+                            <!-- i am using the config.json file to get these values and using it here by jinjer templating -->
+                            <h1>Analytics<br>Admin Panel</h1>
+                            <h2 class="subheading">Check your tool usage</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Main Content-->
+        <div class="container px-4 px-lg-5 fs-6 fs-md-4 fs-lg-2">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <h2 class="fs-3 fs-md-2 fs-lg-1">Usage ascii-to-ZIP</h2>
+                    <!-- this page is copied by me from index.html and the table is inserted insted of the post loop -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Sno</th>
+                                <th>TimeStamp</th>
+                                <th>Page</th>
+                                <th>User IP</th>
+                                <th>Data</th>
+                                <th>Status Code</th>
+                            </tr>
+                            </thead>
+                            {% if usageData%}
+                                <tbody>
+                                    {% for data in usageData %}
+                                        <tr>
+                                            <td>{{data.sno}}</td>
+                                            <td>{{data.timestamp}}</td>
+                                            <td>{{data.page_name}}</td>
+                                            <td>{{data.user_IP}}</td>
+                                            <td><pre>{{data.data}}</pre></td>
+                                            <td>{{data.status_code}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            {% else %}
+                                <p>The logs are empty.</p>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mb-4">
+                <div class="btn btn-primary text-uppercase nav-button"><a href="{{prev}}">← Previous</a></div>
+                <div class="btn btn-primary text-uppercase nav-button"><a href="{{next}}">Older data →</a></div>
+            </div>
+        </div>
+{% endblock %}    

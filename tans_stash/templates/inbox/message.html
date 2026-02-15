@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ params['website_name'] }} | Message | Inbox{% endblock %}
+
+{# {%if contact.img_file != ''%} <!--handel image file name is not given-->
+    {% set fname_full = 'assets/img/'+ contact.img_file %} <!---created a jinger variable to be able to change the bg image-->
+    {% set fname_parts = contact.img_file.rsplit('.', 1) %}
+    {% set fname = 'assets/img/' + fname_parts[0] %}
+{%else%} #}
+    {% set fname =  'assets/img/default-hero-image' %}
+{# {% endif %} #}
+
+{# {% block title %}{{ contact.title }}{% endblock %}
+{% block meta_description %}{{ contact.description or params['website_description'] }}{% endblock %}
+
+{% block og_title %}{{ contact.title }}{% endblock %}
+{% block og_description %}{{ contact.description }}{% endblock %}
+{% block og_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+
+{% block twitter_title %}{{ contact.title }}{% endblock %}
+{% block twitter_description %}{{ contact.description }}{% endblock %}
+{% block twitter_image %}{{ url_for('static',filename=fname,  _external=True)}}{% endblock %} #}
+
+{% block page_style %}{{url_for('static', filename='css/contact.css')}}{% endblock page_style %}
+
+{%block add_headers%}{%endblock add_headers%}
+
+{% block body %}
+        
+    <!-- Page Header-->
+    <header class="masthead">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="contact-heading">
+                            <h1>{{ contact.name }}</h1>
+                            <span class="meta">
+                                contacted on
+                                {{contact.date}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </header>
+        <!-- contact Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <strong>Email: </strong>{{contact.email}}<br>
+                        <strong>Phone no: </strong>{{contact.phone_no}}<br>
+                        <strong>Message: </strong><br>{{contact.msg}}
+                    </div>
+                </div>
+            </div>
+        </article>
+        
+{% endblock %}

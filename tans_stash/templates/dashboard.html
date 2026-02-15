@@ -1,0 +1,111 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ params['website_name'] }} | Dashboard{% endblock %}
+
+{% block page_style %}{{url_for('static', filename='css/styles.css')}}{% endblock page_style %}
+
+{%block add_headers%}
+<meta name="robots" content="noindex, nofollow">
+{%endblock add_headers%}
+
+{% block body %}
+<!-- Page Header-->
+<header class="masthead" style="background-image: url('{{url_for('static', filename='assets/img/home-bg.jpg')}}')">
+    <!-- <header class="masthead" style="background-image: url('{{url_for('static', filename='assets/img/home-bg.jpg')}} ')"></header> -->
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <!-- i am using the config.json file to get these values and using it here by jinjer templating -->
+                    <h1>Admin Panel</h1>
+                    <h2 class="subheading">Manage your post and change them</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Main Content-->
+<div class="container px-4 px-lg-5 fs-6 fs-md-4 fs-lg-2">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+            <h2>Basic actions</h2>
+            <div class="d-grid gap-2 d-md-flex">
+                <a href="{{url_for('dashboard.edit-blog', sno='0')}}" class="btn btn-primary flex-fill text-center">
+                    ADD A NEW POST
+                </a>
+                <a href="{{url_for('inbox.inbox')}}" class="btn btn-primary flex-fill text-center">
+                    INBOX
+                </a>
+                <a href="{{url_for('analytics.analytics')}}" class="btn btn-primary flex-fill text-center">
+                    ANALYTICS
+                </a>
+                <a href="{{url_for('dashboard.dashboard-logout')}}" class="btn btn-primary flex-fill text-center">
+                    LOGOUT
+                </a>
+            </div>
+            <hr>
+            <h2>Upload a file</h2>
+            <form action="{{url_for('dashboard.upload-image')}}" method="post" enctype="multipart/form-data">
+                <div class="row align-items-end justify-content-center justify-content-lg-start">
+
+                    <!-- File input -->
+                    <div class="col-12 col-lg-8 mb-3 mb-lg-0">
+                        <label for="file1" class="form-label d-none">Upload file</label>
+                        <input class="form-control" type="file" id="file1" name="file1">
+                    </div>
+
+                    <!-- Button -->
+                    <div class="col-12 col-lg-4 d-grid">
+                        <button type="submit" class="btn btn-primary fs-6 fs-md-5 fs-lg-4">
+                            Submit
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+
+            <hr>
+            <h2 class="fs-3 fs-md-2 fs-lg-1">WELCOME, edit files here</h2>
+            <!-- this page is copied by me from index.html and the table is inserted insted of the post loop -->
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Sno</th>
+                            <th>Title</th>
+                            <th>Date</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in posts %}
+                        <tr>
+                            <td>{{post.sno}}</td>
+                            <td>{{post.title}}</td>
+                            <td>{{post.date}}</td>
+                            <td><a href="{{url_for('dashboard.edit-blog', sno=post.sno)}}"><button
+                                        class="btn btn-primary fs-6 fs-md-5 fs-lg-4">Edit</button></a></td>
+                            <!--these class are bootstrap styling classes-->
+                            <td>
+                                <form method="POST" action="{{ url_for('dashboard.delete-blog', sno=post.sno) }}"
+                                    onsubmit="return confirm('Are you sure you want to delete this blog?');">
+                                    <input type="hidden" name="csrf_token" value="">
+                                    <button class="btn btn-danger fs-6 fs-md-5 fs-lg-4">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between mb-4">
+        <div class="btn btn-primary text-uppercase nav-button"><a href="{{prev}}">← Previous</a></div>
+        <div class="btn btn-primary text-uppercase nav-button"><a href="{{next}}">Older Posts →</a></div>
+    </div>
+</div>
+{% endblock %}

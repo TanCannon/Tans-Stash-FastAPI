@@ -1,0 +1,322 @@
+{% extends "layout.html" %}
+
+
+{% set fname = "assets/img/tools-hero-img" %}
+{% set ftitle = "Tools Library | All Free Online Tools in One Place" %}
+{% set fdescription = "Explore all free online tools in one place — text tools, JSON tools, converters, counters, generators, and utilities. Fast, lightweight, and built for everyday productivity." %}
+{% set ftagline = "Your complete toolkit — simple, fast, and all in one place." %}
+
+
+
+{% block title %}
+{{ftitle}}
+{% endblock %}
+
+{% block meta_description %}
+{{fdescription}}
+{% endblock %}
+
+{% block og_title %}{{ftitle}}{% endblock %}
+{% block og_description %}{{ fdescription }}{% endblock %}
+{% block og_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+
+{% block twitter_title %}{{ ftitle }}{% endblock %}
+{% block twitter_description %}{{ fdescription }}{% endblock %}
+{% block twitter_image %}{{ url_for('static',filename=fname,  _external=True)}}{% endblock %}
+
+{% block page_style %}
+{{url_for('static', filename='css/tools.css')}}
+{% endblock page_style %}
+
+{%block add_headers%} 
+<link rel="stylesheet" href="{{url_for('static', filename='css/tools.css')}}">
+
+{% endblock %}
+
+{% block body %}
+<header class="masthead">
+  <picture>
+    <!-- Modern WebP -->
+    <source 
+        srcset="{{ url_for('static', filename=fname + '-400.webp') }} 400w,
+                {{ url_for('static', filename=fname + '-800.webp') }} 800w,
+                {{ url_for('static', filename=fname + '-1200.webp') }} 1200w"
+        sizes="100vw"
+        type="image/webp">
+
+    <!-- JPEG fallback -->
+    <source 
+        srcset="{{ url_for('static', filename=fname + '-400.jpg') }} 400w,
+                {{ url_for('static', filename=fname + '-800.jpg') }} 800w,
+                {{ url_for('static', filename=fname + '-1200.jpg') }} 1200w"
+        sizes="100vw"
+        type="image/jpeg">
+
+    <!-- Default fallback -->
+    <img 
+        src="{{ url_for('static', filename=fname + '-800.jpg') }}"
+        sizes="100vw"
+        alt="{{ ftitle }}"
+        class="header-img"
+        fetchpriority="high"
+        decoding="async"
+        loading="eager">
+  </picture>
+  <div class="container position-relative px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+            <div class="post-heading">
+                <!-- <h1>Man must explore, and this is exploration at its greatest</h1> -->
+                <!-- i accssing these lines from python file in post_rout() -->
+                <h1>{{ftitle}}</h1>
+                <h2 class="subheading">{{ftagline}}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+</header>
+<!--main content-->
+
+<main class="max-w-5xl mx-auto px-4 py-10">
+
+  <!-- Search + Filter Bar -->
+  <section>
+    <div class="flex flex-wrap gap-3 items-center mt-4">
+
+      <input
+        id="tool-search"
+        type="search"
+        placeholder="Search tools — e.g. 'JSON', 'counter', 'zip'"
+        class="flex-1 min-w-[220px] px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-300"
+      />
+
+      <select
+        id="tool-sort"
+        class="px-3 py-2 border border-gray-300 rounded-lg"
+      >
+        <option value="popular">Sort: Popular</option>
+        <option value="new">Sort: New</option>
+        <option value="alpha">Sort: A → Z</option>
+      </select>
+
+      <!-- Categories -->
+      <div id="category-filters" class="flex flex-wrap gap-2">
+        <button data-cat="all"
+          class="cat-chip px-3 py-1 rounded-full border border-gray-300 bg-white text-sm aria-pressed:bg-black aria-pressed:text-white">
+          All
+        </button>
+
+        <button data-cat="text"
+          class="cat-chip px-3 py-1 rounded-full border border-gray-300 bg-white text-sm">
+          Text
+        </button>
+
+        <button data-cat="json"
+          class="cat-chip px-3 py-1 rounded-full border border-gray-300 bg-white text-sm">
+          JSON
+        </button>
+
+        <button data-cat="images"
+          class="cat-chip px-3 py-1 rounded-full border border-gray-300 bg-white text-sm">
+          Images
+        </button>
+
+        <button data-cat="dev"
+          class="cat-chip px-3 py-1 rounded-full border border-gray-300 bg-white text-sm">
+          Developer
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools Grid -->
+  <section class="mt-8">
+    <div id="tools-grid"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      <!-- Tool Card Example -->
+    <article
+        class="tool-card border border-gray-200 rounded-xl p-4 bg-white shadow-sm"
+        data-tool-id="ascii-tree-zip"
+        data-categories="dev,zip,filesystem"
+      >
+        <div class="flex gap-4">
+          <img
+            src={{url_for('static', filename="assets/img/asciitree-400.webp")}}
+            alt="ASCII Tree to Folder"
+            class="w-20 h-20 rounded-lg object-cover"
+          />
+
+          <div class="flex-1">
+            <h3 class="font-semibold text-lg mb-1">ASCII Tree to Folder</h3>
+            <p class="text-gray-600 text-sm mb-2">
+              Convert ASCII tree text into real folders and download as a ZIP.
+            </p>
+
+            <div class="flex gap-2 flex-wrap mb-3">
+              <span class="text-xs px-2 py-1 border rounded bg-gray-50">zip</span>
+              <span class="text-xs px-2 py-1 border rounded bg-gray-50">filesystem</span>
+            </div>
+
+            <div class="flex gap-2">
+              <a href="/tools/ascii-tree-to-zip"
+                class="px-3 py-1 border border-black rounded-lg text-sm">
+                Open
+              </a>
+              <button class="btn-copy-link px-2 py-1 border rounded-lg text-sm" data-link="{{ url_for('tools.toolsHome', _external=True) }}/ascii-tree-to-zip">
+                🔗
+              </button>
+            </div>
+          </div>
+        </div>
+    </article>
+
+      <!-- Another Card Example (Character Counter) -->
+    <article
+        class="tool-card border border-gray-200 rounded-xl p-4 bg-white shadow-sm"
+        data-tool-id="char-counter"
+        data-categories="text,writer"
+        >
+        <div class="flex gap-4">
+          <img
+            src={{url_for('static', filename="assets/img/character-counter-400.webp")}}
+            alt="Character Counter"
+            class="w-20 h-20 rounded-lg object-cover"
+          />
+
+          <div class="flex-1">
+            <h3 class="font-semibold text-lg mb-1">Character Counter</h3>
+            <p class="text-gray-600 text-sm mb-2">
+              Count characters, words & sentences with <strong>saved profiles</strong> — perfect for SEO.
+            </p>
+
+            <div class="flex gap-2 flex-wrap mb-3">
+              <span class="text-xs px-2 py-1 border rounded bg-gray-50">text</span>
+              <span class="text-xs px-2 py-1 border rounded bg-gray-50">seo</span>
+            </div>
+
+            <div class="flex gap-2">
+              <a href="/tools/character-counter"
+                class="px-3 py-1 border border-black rounded-lg text-sm">
+                Open
+              </a>
+              <button class="btn-copy-link px-2 py-1 border rounded-lg text-sm" data-link="{{ url_for('tools.toolsHome', _external=True) }}/character-counter">
+                🔗
+              </button>
+            </div>
+          </div>
+        </div>
+    </article>
+
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex justify-center items-center gap-3 mt-8">
+      <button id="prev-page" disabled
+        class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+        Prev
+      </button>
+
+      <span id="page-info" class="text-gray-600 text-sm">Page 1</span>
+
+      <button id="next-page"
+        class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+        Next
+      </button>
+    </div>
+  </section>
+
+</main>
+
+  <!-- Minimal client-side script for search + category filter -->
+<script>
+    (function () {
+      // UI refs
+      const searchInput = document.getElementById("tool-search");
+      const catContainer = document.getElementById("category-filters");
+      const grid = document.getElementById("tools-grid");
+      //const yearEl = document.getElementById("year");
+      //yearEl.textContent = new Date().getFullYear();
+
+      // Basic search + filter logic
+      function applyFilters() {
+        const q = searchInput.value.trim().toLowerCase();
+        const activeCat =
+          Array.from(
+            catContainer.querySelectorAll('.cat-chip[aria-pressed="true"]')
+          ).map((b) => b.dataset.cat)[0] || "all";
+
+        Array.from(grid.querySelectorAll(".tool-card")).forEach((card) => {
+          const title = (
+            card.querySelector("h3")?.textContent || ""
+          ).toLowerCase();
+          const desc = (
+            card.querySelector("p")?.textContent || ""
+          ).toLowerCase();
+          const cats = (card.dataset.categories || "").toLowerCase();
+
+          const matchesQuery =
+            q === "" ||
+            title.includes(q) ||
+            desc.includes(q) ||
+            cats.includes(q);
+          const matchesCategory =
+            activeCat === "all" || cats.split(",").includes(activeCat);
+          card.style.display = matchesQuery && matchesCategory ? "" : "none";
+        });
+      }
+
+      // wire search
+      searchInput.addEventListener("input", applyFilters);
+
+      // wire category chips
+      catContainer.addEventListener("click", (ev) => {
+        const btn = ev.target.closest(".cat-chip");
+        if (!btn) return;
+
+        // If already pressed, unpress it
+        const isPressed = btn.getAttribute("aria-pressed") === "true";
+
+        // Reset all buttons
+        Array.from(catContainer.querySelectorAll(".cat-chip")).forEach((b) => {
+            b.setAttribute("aria-pressed", "false");
+            b.style.background = "#fff";
+            b.style.color = "#000";
+            b.style.borderColor = "#ddd";
+        });
+
+        // If it was not pressed before, press it
+        if (!isPressed) {
+            btn.setAttribute("aria-pressed", "true");
+            btn.style.background = "#111";
+            btn.style.color = "#fff";
+            btn.style.borderColor = "#111";
+        }
+
+        applyFilters();
+    });
+
+
+      // wire copy link buttons
+      grid.addEventListener("click", (ev) => {
+        const btn = ev.target.closest(".btn-copy-link");
+        if (!btn) return;
+        const link = btn.dataset.link || window.location.origin;
+        navigator.clipboard
+          ?.writeText(link)
+          .then(() => {
+            btn.textContent = "✓";
+            setTimeout(() => (btn.textContent = "🔗"), 900);
+          })
+          .catch(() => {
+            alert("Copy failed — please copy manually: " + link);   
+          });
+      });
+
+      // initial filter pass
+      applyFilters();
+    })();
+</script>
+</body>
+
+{% endblock %}

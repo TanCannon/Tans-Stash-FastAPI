@@ -1,0 +1,24 @@
+User-agent: *
+
+# Disallow sensitive or non-SEO pages
+Disallow: /dashboard/
+Disallow: /login/
+Disallow: /logout/
+Disallow: /uploader/
+Disallow: /search/
+Disallow: /privacy/
+Disallow: /terms/
+Disallow: /disclaimer/
+Disallow: /faq/
+
+# Block raw static files by default
+Disallow: /static/
+
+# Allow essential static assets
+Allow: /static/css/
+Allow: /static/js/
+Allow: /static/assets/
+Allow: /static/favicon/
+
+# Sitemap
+Sitemap: https://tancannon2003.pythonanywhere.com/sitemap.xml
