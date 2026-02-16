@@ -56,6 +56,7 @@ class Comment(Base):
         backref="parent",
         remote_side=[id],
         cascade="all, delete-orphan",
+        single_parent=True
     )
 
     __table_args__ = (

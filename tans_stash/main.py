@@ -8,16 +8,21 @@ from .models.user_usage_model import ToolUsage
 # from .models import Base
 
 # from .router import auth, todos, admin, user
+from .routers import register_api_routers
 
 #using for the frontend
 # from fastapi.staticfiles import StaticFiles
 # from fastapi.responses import RedirectResponse
+
 
 from starlette import status
  
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
+
+#registering routers
+register_api_routers(app)
 
 @app.get('/', status_code=status.HTTP_200_OK)
 async def hello_world():

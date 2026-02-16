@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 ### Base → Create → Response pattern ###
 class PostBase(BaseModel):
@@ -29,3 +29,10 @@ class PostResponse(PostBase):
 
     class Config:
         from_attributes = True  # Correct for Pydantic v2
+
+# for pagination of the posts
+class PaginatedPosts(BaseModel):
+    items: List[PostResponse]
+    total: int
+    skip: int
+    limit: int
