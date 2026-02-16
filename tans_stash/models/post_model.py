@@ -8,7 +8,7 @@ class Post(Base):
 
     sno = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
-    slug = Column(String(255), nullable=False)
+    slug = Column(String(255), unique=True, nullable=False)
     content = Column(Text, nullable=False)
     tag_line = Column(String(255), nullable=False)
     description = Column(String(500), nullable=False, default="Tan's Stash")
