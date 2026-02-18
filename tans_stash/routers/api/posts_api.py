@@ -5,6 +5,9 @@ from starlette import status
 from sqlalchemy.orm import Session
 from typing import Annotated, List
 from tans_stash.schemas import post_schemas
+from datetime import datetime, timezone
+
+from tans_stash.admin.auth import require_admin
 
 router = APIRouter(
     prefix="/blogs",
@@ -55,4 +58,66 @@ async def read_a_post( blog_sno: int = Path(gt=0), db: db_dependency = None):
 
     return post
 
+#create a post
+@router.post("/create-blog", response_model=post_schemas.PostResponse, status_code=status.HTTP_201_CREATED)
+async def create_post(post: post_schemas.PostCreate, db: db_dependency, admin: str = Depends(require_admin)):
+    # Check if slug already exists
+    existing = db.query(Post).filter(Post.slug == post.slug).first()
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Slug already exists"
+        )
+
+    new_post = Post(**post.model_dump())
+
+    db.add(new_post)
+    db.commit()
+    db.refresh(new_post)
+
+    return new_post
+
+#update a post
+@router.put("/update-blog/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def update_post(post_id: int, updated_data: post_schemas.PostCreate, db: db_dependency, admin: str = Depends(require_admin)):
+    post = db.query(Post).filter(Post.sno == post_id).first()
+
+    if not post:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found"
+        )
+
+    # Prevent slug duplication
+    if updated_data.slug != post.slug:
+        existing = db.query(Post).filter(Post.slug == updated_data.slug).first()
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Slug already exists"
+            )
+
+    for key, value in updated_data.model_dump().items():
+        setattr(post, key, value)
+
+    post.last_modified = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(post)
+
+#delete a post
+@router.delete("/delete-blog/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(post_id: int, db: db_dependency,admin: str = Depends(require_admin)):
+    post = db.query(Post).filter(Post.sno == post_id).first()
+
+    if not post:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Blog not found"
+        )
+
+    db.delete(post)
+    db.commit()
+
+    return None
 
