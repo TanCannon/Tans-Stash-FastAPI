@@ -1,18 +1,18 @@
 from fastapi import Depends, APIRouter, HTTPException, Path, Query, Request, UploadFile, File
-from tans_stash.models.post_model import Post
-from tans_stash.database import SessionLocal
+from src.models.post_model import Post
+from src.database import SessionLocal
 from starlette import status
 from sqlalchemy.orm import Session
 from typing import Annotated, List
-from tans_stash.schemas import post_schemas
+from src.schemas import post_schemas
 from datetime import datetime, timezone
 
-from tans_stash.admin.auth import require_admin
+from src.admin.auth import require_admin
 
 import os
 import logging
 from werkzeug.utils import secure_filename  # I can keep using this
-from tans_stash.services.optimise_images_service import save_responsive_images
+from src.services.optimise_images_service import save_responsive_images
 
 
 
@@ -148,7 +148,7 @@ async def upload_image(file1: UploadFile = File(...), _: str = Depends(require_a
             )
 
         # upload_dir = settings.UPLOAD_LOCATION
-        upload_dir = "D:\\Documents\\professional docs\\PROJECTS\\My projects\\posts website\\post-website-FastAPI\\tans_stash\\static\\assets\\img"
+        upload_dir = "D:\\Documents\\professional docs\\PROJECTS\\My projects\\posts website\\post-website-FastAPI\\src\\static\\assets\\img"
         os.makedirs(upload_dir, exist_ok=True)
 
         # Save file

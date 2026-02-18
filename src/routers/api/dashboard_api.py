@@ -1,6 +1,6 @@
 from fastapi import Request, APIRouter, Form, Depends, HTTPException, status
 # from fastapi.responses import RedirectResponse
-from tans_stash.admin.auth import require_admin, ADMIN_USERNAME, ADMIN_PASSWORD
+from src.admin.auth import require_admin, ADMIN_USERNAME, ADMIN_PASSWORD
 
 router = APIRouter(
     prefix = '/api',

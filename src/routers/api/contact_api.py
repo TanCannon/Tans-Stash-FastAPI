@@ -1,11 +1,11 @@
 from fastapi import Depends, APIRouter, HTTPException, Path, Query, Request
-from tans_stash.models.contact_model import Contact
-from tans_stash.database import SessionLocal
+from src.models.contact_model import Contact
+from src.database import SessionLocal
 from starlette import status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from typing import Annotated, List
-from tans_stash.schemas import contact_schemas
+from src.schemas import contact_schemas
 
 router = APIRouter(
     prefix="/api",

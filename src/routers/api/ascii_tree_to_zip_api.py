@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 from starlette import status
-from tans_stash.schemas import unicode_tree_schemas
+from src.schemas import unicode_tree_schemas
 from fastapi.responses import FileResponse
 import tempfile, os, shutil
-from tans_stash.services.ascii_tree_to_zip_service import create_structure_from_ascii, zip_folder
+from src.services.ascii_tree_to_zip_service import create_structure_from_ascii, zip_folder
 
 router = APIRouter(
     prefix="/api",
