@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter, HTTPException, Path, Query, Request
+from fastapi import Depends, APIRouter, HTTPException, Path, Query, Request, UploadFile, File
 from tans_stash.models.post_model import Post
 from tans_stash.database import SessionLocal
 from starlette import status
@@ -9,8 +9,15 @@ from datetime import datetime, timezone
 
 from tans_stash.admin.auth import require_admin
 
+import os
+import logging
+from werkzeug.utils import secure_filename  # I can keep using this
+from tans_stash.services.optimise_images_service import save_responsive_images
+
+
+
 router = APIRouter(
-    prefix="/blogs",
+    prefix="/api",
     tags=["blogs"]
 )
 
@@ -26,7 +33,7 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 
 #paginated route
-@router.get("/", response_model=post_schemas.PaginatedPosts, status_code=status.HTTP_200_OK)
+@router.get("/get-paginated-blogs", response_model=post_schemas.PaginatedPosts, status_code=status.HTTP_200_OK)
 async def read_all_posts_paginated(db: db_dependency, page: int = Query(1, ge=1), size: int = Query(10, ge=1, le=100)):
     skip = (page - 1) * size
     total = db.query(Post).count()
@@ -121,3 +128,64 @@ async def delete_post(post_id: int, db: db_dependency,admin: str = Depends(requi
 
     return None
 
+#upload/update post hero banner
+@router.post("/update-blog-banner", status_code=status.HTTP_201_CREATED)
+async def upload_image(file1: UploadFile = File(...), _: str = Depends(require_admin)):
+    #Validate file presence
+    if not file1.filename:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No file uploaded"
+        )
+
+    try:
+        #Secure filename
+        filename = secure_filename(file1.filename)
+        if not filename:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid filename"
+            )
+
+        # upload_dir = settings.UPLOAD_LOCATION
+        upload_dir = "D:\\Documents\\professional docs\\PROJECTS\\My projects\\posts website\\post-website-FastAPI\\tans_stash\\static\\assets\\img"
+        os.makedirs(upload_dir, exist_ok=True)
+
+        # Save file
+        file_path = os.path.join(upload_dir, filename)
+
+        with open(file_path, "wb") as buffer:
+            content = await file1.read()
+            buffer.write(content)
+
+        #Post-processing (your existing function)
+        base_name, _ = os.path.splitext(filename)
+        save_responsive_images(file_path, upload_dir, base_name)
+
+    except PermissionError:
+        logging.exception("Upload directory permission error")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Upload directory not writable"
+        )
+
+    except OSError:
+        logging.exception("File system error during upload")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="File system error"
+        )
+
+    except Exception:
+        logging.exception("Unexpected error during image upload")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Upload failed"
+        )
+
+    #Success response
+    return {
+        "success": True,
+        "message": "Image uploaded successfully",
+        "filename": filename
+    }
