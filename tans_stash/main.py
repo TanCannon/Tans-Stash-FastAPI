@@ -1,3 +1,6 @@
+import os
+from dotenv import load_dotenv
+
 from fastapi import FastAPI
 from .database import engine, Base
 from .models.post_model import Post  
@@ -10,6 +13,7 @@ from .models.user_usage_model import ToolUsage
 # from .router import auth, todos, admin, user
 from .routers import register_api_routers
 
+from starlette.middleware.sessions import SessionMiddleware
 #using for the frontend
 # from fastapi.staticfiles import StaticFiles
 # from fastapi.responses import RedirectResponse
@@ -18,6 +22,13 @@ from .routers import register_api_routers
 from starlette import status
  
 app = FastAPI()
+
+load_dotenv()
+# Session middleware (ONLY used by pages)
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SECRET_KEY")
+)
 
 Base.metadata.create_all(bind=engine)
 
