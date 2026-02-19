@@ -18,11 +18,11 @@
 
 {% block og_title %}{{ftitle}}{% endblock %}
 {% block og_description %}{{ fdescription }}{% endblock %}
-{% block og_image %}{{ url_for('static',path=fname, _external=True)}}{% endblock %}
+{% block og_image %}{{ url_for('static',path=fname)}}{% endblock %}
 
 {% block twitter_title %}{{ ftitle }}{% endblock %}
 {% block twitter_description %}{{ fdescription }}{% endblock %}
-{% block twitter_image %}{{ url_for('static',path=fname,  _external=True)}}{% endblock %}
+{% block twitter_image %}{{ url_for('static',path=fname)}}{% endblock %}
 
 {% block page_style %}
 {{url_for('static', path='css/tools.css')}}
@@ -163,7 +163,7 @@
                 class="px-3 py-1 border border-black rounded-lg text-sm">
                 Open
               </a>
-              <button class="btn-copy-link px-2 py-1 border rounded-lg text-sm" data-link="{{ url_for('tools.toolsHome', _external=True) }}/ascii-tree-to-zip">
+              <button class="btn-copy-link px-2 py-1 border rounded-lg text-sm" data-link="{{ url_for('tools.toolsHome') }}/ascii-tree-to-zip">
                 🔗
               </button>
             </div>
@@ -200,7 +200,7 @@
                 class="px-3 py-1 border border-black rounded-lg text-sm">
                 Open
               </a>
-              <button class="btn-copy-link px-2 py-1 border rounded-lg text-sm" data-link="{{ url_for('tools.toolsHome', _external=True) }}/character-counter">
+              <button class="btn-copy-link px-2 py-1 border rounded-lg text-sm" data-link="{{ url_for('tools.toolsHome') }}/character-counter">
                 🔗
               </button>
             </div>

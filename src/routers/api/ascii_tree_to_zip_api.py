@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Form
 from starlette import status
 from src.schemas import unicode_tree_schemas
 from fastapi.responses import FileResponse
@@ -10,10 +10,10 @@ router = APIRouter(
     tags=["tools"]
 )
 
-@router.post("/ascii-tree-to-zip-api", status_code=status.HTTP_200_OK)
-def ascii_tree_download(unicode_tree_request: unicode_tree_schemas.UnicodeTreeProcess):
+@router.post("/ascii-tree-to-zip-api", name="ascii_tree_to_zip_api.ascii_tree_to_zip_download", status_code=status.HTTP_200_OK)
+def ascii_tree_download(unicodeContent: str = Form("")):
     
-    ascii_tree = unicode_tree_request.unicode_tree
+    ascii_tree = unicodeContent
     
     tmpdir = tempfile.mkdtemp()
     base_path = os.path.join(tmpdir, "project")

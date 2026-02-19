@@ -21,11 +21,11 @@
 
 {% block og_title %}{{ftitle}}{% endblock %}
 {% block og_description %}{{ fdescription }}{% endblock %}
-{% block og_image %}{{ url_for('static',path=fname, _external=True)}}{% endblock %}
+{% block og_image %}{{ url_for('static',path=fname)}}{% endblock %}
 
 {% block twitter_title %}{{ ftitle }}{% endblock %}
 {% block twitter_description %}{{ fdescription }}{% endblock %}
-{% block twitter_image %}{{ url_for('static',path=fname, _external=True)}}{% endblock %}
+{% block twitter_image %}{{ url_for('static',path=fname)}}{% endblock %}
 
 {% block page_style %}
 {{url_for('static', path='css/characterCounter.css')}}
