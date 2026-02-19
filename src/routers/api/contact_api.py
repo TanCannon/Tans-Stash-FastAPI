@@ -61,7 +61,7 @@ async def read_all_contacts_paginated(db: db_dependency, page: int = Query(1, ge
         "limit": size,
     }
 
-@router.post("/create-contact", status_code=status.HTTP_201_CREATED)
+@router.post("/create-contact", name="contact.contact", status_code=status.HTTP_201_CREATED)
 async def create_contact(db: db_dependency, contact_request: contact_schemas.ContactCreate):
     contact_model = Contact(**contact_request.model_dump())
 
