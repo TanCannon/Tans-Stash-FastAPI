@@ -17,7 +17,7 @@ from src.core.flash import flash
 from src.core.context import get_global_context
 
 router = APIRouter(    
-    tags=["Home"]
+    tags=["pages"]
 )
 
 POSTS_PER_PAGE = params['no_of_posts']  # replace with your params['no_of_posts']

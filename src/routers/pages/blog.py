@@ -17,7 +17,7 @@ from src.core.templates import templates
 from src.core.flash import flash
 from src.core.context import get_global_context
 
-router = APIRouter(prefix="/blog", tags=["Blog"])
+router = APIRouter(prefix="/blog", tags=["pages"])
 # templates = Jinja2Templates(directory="templates")
 
 def get_db():

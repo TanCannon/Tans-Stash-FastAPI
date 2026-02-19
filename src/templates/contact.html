@@ -92,7 +92,7 @@
 
                             <!-- i added action="/contact" and method="post" and name="sentmessage" -->
                             
-                            <form name="sentmessage" id="contactForm" action="/contact" method="post" data-sb-form-api-token="API_TOKEN">
+                            <form name="sentmessage" id="contactForm" action="{{ url_for('contact.create-contact') }}" method="post" data-sb-form-api-token="API_TOKEN">
                                 <div class="form-floating">
                                     <!-- i have added name="name" -->
                                     <input class="form-control" id="name" name="name" type="text" placeholder="Enter your name..." data-sb-validations="required" required/>
