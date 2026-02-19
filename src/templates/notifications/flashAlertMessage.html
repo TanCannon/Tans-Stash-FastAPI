@@ -58,21 +58,19 @@
     const messageSpan = document.getElementById("flash-message");
     const closeBtn = document.getElementById("flash-close");
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          messageSpan.textContent = "{{ message }}";
-          banner.classList.add("{{ category }}");
-          banner.style.display = "flex";
+    {% if flash_messages %}
+        {% for msg in flash_messages %}
+            messageSpan.textContent = "{{ msg.message }}";
+            banner.classList.add("{{ msg.category }}");
+            banner.style.display = "flex";
 
-          // auto-dismiss after 4 seconds
-          setTimeout(() => {
-            banner.style.opacity = "0";
-            setTimeout(() => { banner.style.display = "none"; }, 300);
-          }, 4000);
+            // auto-dismiss after 4 seconds
+            setTimeout(() => {
+                banner.style.opacity = "0";
+                setTimeout(() => { banner.style.display = "none"; }, 300);
+            }, 4000);
         {% endfor %}
-      {% endif %}
-    {% endwith %}
+    {% endif %}
 
     closeBtn.addEventListener("click", function () {
       banner.style.opacity = "0";
@@ -80,3 +78,4 @@
     });
   })();
 </script>
+

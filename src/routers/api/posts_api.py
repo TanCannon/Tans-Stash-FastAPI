@@ -39,6 +39,7 @@ async def read_all_posts_paginated(db: db_dependency, page: int = Query(1, ge=1)
     total = db.query(Post).count()
     posts = (
         db.query(Post)
+        .order_by(Post.date.desc())
         .offset(skip)
         .limit(size)
         .all()

@@ -1,0 +1,14 @@
+{
+    "params": 
+    {
+        "fb_url":"https://facebook.com",
+        "tw_url":"https://twitter.com",
+        "gh_url":"https://github.com",
+        "no_of_posts": 2,
+        "website_name": "Tan's Stash",
+        "website_description":"Explore AI, quantum tech, AR/VR, robotics, and web dev insights—plus free tools to learn, build, and innovate with curiosity and chill 🤯.",
+        "upload_location":"D:\\Documents\\professional docs\\PROJECTS\\My projects\\posts website\\posts-website-main\\static\\assets\\img",
+        "favicon_url": "https://tancannon2003.pythonanywhere.com/static/favicon/favicon.ico"
+    }
+    
+}

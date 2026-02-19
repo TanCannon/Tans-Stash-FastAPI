@@ -1,17 +1,18 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/SearchBar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='css/SearchBar.css') }}">
 
 <form class="search-form" method="get" action="{{ url_for('search') }}">
     <input
         type="search"
         name="q"
         placeholder="Search blogs..."
-        value="{{ request.args.get('q', '') }}"
+        value="{{ request.query_params.get('q', '') }}"
+
         aria-label="Search blog posts"
         required
     >
     <button class="search-btn" type="submit" aria-label="Search"> 
         <img 
-        src="{{ url_for('static', filename='/assets/icons/search.svg') }}" 
+        src="{{ url_for('static', path='/assets/icons/search.svg') }}" 
         alt="search-button" 
         class="icon"
         >
