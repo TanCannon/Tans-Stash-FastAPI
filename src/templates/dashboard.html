@@ -2,7 +2,7 @@
 
 {% block title %}{{ params['website_name'] }} | Dashboard{% endblock %}
 
-{% block page_style %}{{url_for('static', filename='css/styles.css')}}{% endblock page_style %}
+{% block page_style %}{{url_for('static', path='css/styles.css')}}{% endblock page_style %}
 
 {%block add_headers%}
 <meta name="robots" content="noindex, nofollow">
@@ -10,8 +10,8 @@
 
 {% block body %}
 <!-- Page Header-->
-<header class="masthead" style="background-image: url('{{url_for('static', filename='assets/img/home-bg.jpg')}}')">
-    <!-- <header class="masthead" style="background-image: url('{{url_for('static', filename='assets/img/home-bg.jpg')}} ')"></header> -->
+<header class="masthead" style="background-image: url('{{url_for('static', path='assets/img/home-bg.jpg')}}')">
+    <!-- <header class="masthead" style="background-image: url('{{url_for('static', path='assets/img/home-bg.jpg')}} ')"></header> -->
     <div class="container position-relative px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">

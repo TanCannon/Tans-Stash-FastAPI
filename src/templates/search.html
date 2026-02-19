@@ -6,13 +6,13 @@
 
 {% block og_title %}{{params['website_name'] }} | Search results for “{{ query }}”{% endblock %}
 {% block og_description %}{{params['website_description']}}{% endblock %}
-{% block og_image %}{{ url_for('static',filename='assets/img/home-bg.jpg', _external=True)}}{% endblock %}
+{% block og_image %}{{ url_for('static',path='assets/img/home-bg.jpg', _external=True)}}{% endblock %}
 
 {% block twitter_title %}{{params['website_name'] }} | Search results for “{{ query }}”{% endblock %}
 {% block twitter_description %}{{params['website_description']}}{% endblock %}
-{% block twitter_image %}{{ url_for('static',filename='assets/img/home-bg.jpg',  _external=True)}}{% endblock %}
+{% block twitter_image %}{{ url_for('static',path='assets/img/home-bg.jpg',  _external=True)}}{% endblock %}
 
-{% block page_style %}{{url_for('static', filename='css/index.css')}}{% endblock page_style %}
+{% block page_style %}{{url_for('static', path='css/index.css')}}{% endblock page_style %}
 
 {%block add_headers%}
     <meta name="robots" content="noindex, follow">
@@ -82,8 +82,8 @@
 
 {% block body %}
         <!-- Page Header-->
-        <header class="masthead" style="background-image: url('{{url_for('static', filename='assets/img/home-bg.jpg')}}')">
-            <!-- <header class="masthead" style="background-image: url('{{url_for('static', filename='assets/img/home-bg.jpg')}} ')"></header> -->
+        <header class="masthead" style="background-image: url('{{url_for('static', path='assets/img/home-bg.jpg')}}')">
+            <!-- <header class="masthead" style="background-image: url('{{url_for('static', path='assets/img/home-bg.jpg')}} ')"></header> -->
             <div class="container position-relative px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">

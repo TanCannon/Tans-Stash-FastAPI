@@ -20,7 +20,7 @@ router = APIRouter(
     tags=["Home"]
 )
 
-POSTS_PER_PAGE = params['no_of_posts']
+POSTS_PER_PAGE = params['no_of_posts']  # replace with your params['no_of_posts']
 
 
 def get_db():

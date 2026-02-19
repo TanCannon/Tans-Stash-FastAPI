@@ -17,14 +17,14 @@
 
 {% block og_title %}{{ftitle}}{% endblock %}
 {% block og_description %}{{ fdescription }}{% endblock %}
-{% block og_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+{% block og_image %}{{ url_for('static',path=fname, _external=True)}}{% endblock %}
 
 {% block twitter_title %}{{ ftitle }}{% endblock %}
 {% block twitter_description %}{{ fdescription }}{% endblock %}
-{% block twitter_image %}{{ url_for('static',filename=fname,  _external=True)}}{% endblock %}
+{% block twitter_image %}{{ url_for('static',path=fname,  _external=True)}}{% endblock %}
 
 {% block page_style %}
-{{url_for('static', filename='css/generateZip.css')}}
+{{url_for('static', path='css/generateZip.css')}}
 {% endblock page_style %}
 
 {%block add_headers%} 
@@ -38,7 +38,7 @@
 {% endblock %}
 
 {% block body %}
-   <header class="masthead" style="background-image: url('{{url_for('static', filename='assets/img/asciitree.png')}}')">
+   <header class="masthead" style="background-image: url('{{url_for('static', path='assets/img/asciitree.png')}}')">
     <div class="container position-relative px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
@@ -125,7 +125,7 @@
     </div>
 
     <!-- Your JS (always after CDNs) -->
-    <script type="module" src="{{url_for('static', filename='js/generateZip.js')}}" defer></script>
+    <script type="module" src="{{url_for('static', path='js/generateZip.js')}}" defer></script>
 
 {# <script>
     

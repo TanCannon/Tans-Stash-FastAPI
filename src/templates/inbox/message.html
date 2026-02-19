@@ -15,13 +15,13 @@
 
 {% block og_title %}{{ contact.title }}{% endblock %}
 {% block og_description %}{{ contact.description }}{% endblock %}
-{% block og_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+{% block og_image %}{{ url_for('static',path=fname, _external=True)}}{% endblock %}
 
 {% block twitter_title %}{{ contact.title }}{% endblock %}
 {% block twitter_description %}{{ contact.description }}{% endblock %}
-{% block twitter_image %}{{ url_for('static',filename=fname,  _external=True)}}{% endblock %} #}
+{% block twitter_image %}{{ url_for('static',path=fname,  _external=True)}}{% endblock %} #}
 
-{% block page_style %}{{url_for('static', filename='css/contact.css')}}{% endblock page_style %}
+{% block page_style %}{{url_for('static', path='css/contact.css')}}{% endblock page_style %}
 
 {%block add_headers%}{%endblock add_headers%}
 

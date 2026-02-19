@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
-{% block page_style %}{{url_for('static', filename='css/404.css')}}{% endblock page_style %}
+{% block page_style %}{{url_for('static', path='css/404.css')}}{% endblock page_style %}
 {% block body %}
 <!-- Page Header-->
 <header class="masthead"
-    style="background-image: url('{{url_for('static', filename='assets/img/about-bg.jpg')}}')">
+    style="background-image: url('{{url_for('static', path='assets/img/about-bg.jpg')}}')">
     <div class="container position-relative px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">

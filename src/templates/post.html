@@ -15,28 +15,28 @@
 
     {% block og_title %}{{ post.title }}{% endblock %}
     {% block og_description %}{{ post.description }}{% endblock %}
-    {% block og_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+    {% block og_image %}{{ url_for('static',path=fname)}}{% endblock %}
 
     {% block twitter_title %}{{ post.title }}{% endblock %}
     {% block twitter_description %}{{ post.description }}{% endblock %}
-    {% block twitter_image %}{{ url_for('static',filename=fname,  _external=True)}}{% endblock %}
+    {% block twitter_image %}{{ url_for('static',path=fname)}}{% endblock %}
 
-    {% block page_style %}{{url_for('static', filename='css/post.css')}}{% endblock page_style %}
+    {% block page_style %}{{url_for('static', path='css/post.css')}}{% endblock page_style %}
 
     {%block add_headers%}
 
         {# comment section css and js #}
-        <link rel="preload" href="{{url_for('static', filename='css/comments/commentsSection.css')}}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <script src="{{ url_for('static', filename='js/comments/commentSection.js') }}" defer></script>
+        <link rel="preload" href="{{url_for('static', path='css/comments/commentsSection.css')}}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <script src="{{ url_for('static', path='js/comments/commentSection.js') }}" defer></script>
         {# END #}
         
         <link 
         rel="preload" 
         as="image" 
         imagesrcset="
-            {{ url_for('static', filename=fname + '-400.webp') }} 400w,
-            {{ url_for('static', filename=fname + '-800.webp') }} 800w,
-            {{ url_for('static', filename=fname + '-1200.webp') }} 1200w"
+            {{ url_for('static', path=fname + '-400.webp') }} 400w,
+            {{ url_for('static', path=fname + '-800.webp') }} 800w,
+            {{ url_for('static', path=fname + '-1200.webp') }} 1200w"
         imagesizes="100vw"
         fetchpriority="high"
         type="image/webp">
@@ -49,7 +49,7 @@
             "headline": "{{ post.title | e }}",
             "alternativeHeadline": "{{ post.tag_line | e }}",
             "description": "{{ post.description | striptags | truncate(200) | e }}",
-            "image": "{{ url_for('static', filename=fname, _external=True) }}",
+            "image": "{{ url_for('static', path=fname) }}",
             "author": {
                 "@type": "Person",
                 "name": "Tanmaya Kumar Naik",
@@ -61,7 +61,7 @@
                 "name": "{{params["website_name"]}}",
                 "logo": {
                 "@type": "ImageObject",
-                "url": "{{ url_for('static', filename='favicon.ico', _external=True) }}"
+                "url": "{{ url_for('static', path='favicon.ico') }}"
                 }
             },
             "mainEntityOfPage": {
@@ -101,23 +101,23 @@
         <picture>
             <!-- Modern WebP -->
             <source 
-                srcset="{{ url_for('static', filename=fname + '-400.webp') }} 400w,
-                        {{ url_for('static', filename=fname + '-800.webp') }} 800w,
-                        {{ url_for('static', filename=fname + '-1200.webp') }} 1200w"
+                srcset="{{ url_for('static', path=fname + '-400.webp') }} 400w,
+                        {{ url_for('static', path=fname + '-800.webp') }} 800w,
+                        {{ url_for('static', path=fname + '-1200.webp') }} 1200w"
                 sizes="100vw"
                 type="image/webp">
 
             <!-- JPEG fallback -->
             <source 
-                srcset="{{ url_for('static', filename=fname + '-400.jpg') }} 400w,
-                        {{ url_for('static', filename=fname + '-800.jpg') }} 800w,
-                        {{ url_for('static', filename=fname + '-1200.jpg') }} 1200w"
+                srcset="{{ url_for('static', path=fname + '-400.jpg') }} 400w,
+                        {{ url_for('static', path=fname + '-800.jpg') }} 800w,
+                        {{ url_for('static', path=fname + '-1200.jpg') }} 1200w"
                 sizes="100vw"
                 type="image/jpeg">
 
             <!-- Default fallback -->
             <img 
-                src="{{ url_for('static', filename=fname + '-800.jpg')}}"
+                src="{{ url_for('static', path=fname + '-800.jpg')}}"
                 sizes="100vw"
                 alt="{{ post.title | default('') }}"
                 class="header-img"

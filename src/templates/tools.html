@@ -18,18 +18,18 @@
 
 {% block og_title %}{{ftitle}}{% endblock %}
 {% block og_description %}{{ fdescription }}{% endblock %}
-{% block og_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+{% block og_image %}{{ url_for('static',path=fname, _external=True)}}{% endblock %}
 
 {% block twitter_title %}{{ ftitle }}{% endblock %}
 {% block twitter_description %}{{ fdescription }}{% endblock %}
-{% block twitter_image %}{{ url_for('static',filename=fname,  _external=True)}}{% endblock %}
+{% block twitter_image %}{{ url_for('static',path=fname,  _external=True)}}{% endblock %}
 
 {% block page_style %}
-{{url_for('static', filename='css/tools.css')}}
+{{url_for('static', path='css/tools.css')}}
 {% endblock page_style %}
 
 {%block add_headers%} 
-<link rel="stylesheet" href="{{url_for('static', filename='css/tools.css')}}">
+<link rel="stylesheet" href="{{url_for('static', path='css/tools.css')}}">
 
 {% endblock %}
 
@@ -38,23 +38,23 @@
   <picture>
     <!-- Modern WebP -->
     <source 
-        srcset="{{ url_for('static', filename=fname + '-400.webp') }} 400w,
-                {{ url_for('static', filename=fname + '-800.webp') }} 800w,
-                {{ url_for('static', filename=fname + '-1200.webp') }} 1200w"
+        srcset="{{ url_for('static', path=fname + '-400.webp') }} 400w,
+                {{ url_for('static', path=fname + '-800.webp') }} 800w,
+                {{ url_for('static', path=fname + '-1200.webp') }} 1200w"
         sizes="100vw"
         type="image/webp">
 
     <!-- JPEG fallback -->
     <source 
-        srcset="{{ url_for('static', filename=fname + '-400.jpg') }} 400w,
-                {{ url_for('static', filename=fname + '-800.jpg') }} 800w,
-                {{ url_for('static', filename=fname + '-1200.jpg') }} 1200w"
+        srcset="{{ url_for('static', path=fname + '-400.jpg') }} 400w,
+                {{ url_for('static', path=fname + '-800.jpg') }} 800w,
+                {{ url_for('static', path=fname + '-1200.jpg') }} 1200w"
         sizes="100vw"
         type="image/jpeg">
 
     <!-- Default fallback -->
     <img 
-        src="{{ url_for('static', filename=fname + '-800.jpg') }}"
+        src="{{ url_for('static', path=fname + '-800.jpg') }}"
         sizes="100vw"
         alt="{{ ftitle }}"
         class="header-img"
@@ -142,7 +142,7 @@
       >
         <div class="flex gap-4">
           <img
-            src={{url_for('static', filename="assets/img/asciitree-400.webp")}}
+            src={{url_for('static', path="assets/img/asciitree-400.webp")}}
             alt="ASCII Tree to Folder"
             class="w-20 h-20 rounded-lg object-cover"
           />
@@ -179,7 +179,7 @@
         >
         <div class="flex gap-4">
           <img
-            src={{url_for('static', filename="assets/img/character-counter-400.webp")}}
+            src={{url_for('static', path="assets/img/character-counter-400.webp")}}
             alt="Character Counter"
             class="w-20 h-20 rounded-lg object-cover"
           />

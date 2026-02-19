@@ -2,7 +2,7 @@
 
 {% set fname =  'assets/img/about-bg' %}
 
-{% block page_style %}{{url_for('static', filename='css/about.css')}}{% endblock page_style %}
+{% block page_style %}{{url_for('static', path='css/about.css')}}{% endblock page_style %}
 {% block title %}About | {{params['website_name']}}{% endblock %}
 
 {%block add_headers%}
@@ -41,23 +41,23 @@
     <picture>
             <!-- Modern WebP -->
             <source 
-                srcset="{{ url_for('static', filename=fname + '-400.webp') }} 400w,
-                        {{ url_for('static', filename=fname + '-800.webp') }} 800w,
-                        {{ url_for('static', filename=fname + '-1200.webp') }} 1200w"
+                srcset="{{ url_for('static', path=fname + '-400.webp') }} 400w,
+                        {{ url_for('static', path=fname + '-800.webp') }} 800w,
+                        {{ url_for('static', path=fname + '-1200.webp') }} 1200w"
                 sizes="100vw"
                 type="image/webp">
 
             <!-- JPEG fallback -->
             <source 
-                srcset="{{ url_for('static', filename=fname + '-400.jpg') }} 400w,
-                        {{ url_for('static', filename=fname + '-800.jpg') }} 800w,
-                        {{ url_for('static', filename=fname + '-1200.jpg') }} 1200w"
+                srcset="{{ url_for('static', path=fname + '-400.jpg') }} 400w,
+                        {{ url_for('static', path=fname + '-800.jpg') }} 800w,
+                        {{ url_for('static', path=fname + '-1200.jpg') }} 1200w"
                 sizes="100vw"
                 type="image/jpeg">
 
             <!-- Default fallback -->
             <img 
-                src="{{ url_for('static', filename=fname + '-800.jpg') }}"
+                src="{{ url_for('static', path=fname + '-800.jpg') }}"
                 sizes="100vw"
                 alt="home-page-banner"
                 class="header-img"

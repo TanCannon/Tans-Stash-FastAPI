@@ -21,14 +21,14 @@
 
 {% block og_title %}{{ftitle}}{% endblock %}
 {% block og_description %}{{ fdescription }}{% endblock %}
-{% block og_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+{% block og_image %}{{ url_for('static',path=fname, _external=True)}}{% endblock %}
 
 {% block twitter_title %}{{ ftitle }}{% endblock %}
 {% block twitter_description %}{{ fdescription }}{% endblock %}
-{% block twitter_image %}{{ url_for('static',filename=fname, _external=True)}}{% endblock %}
+{% block twitter_image %}{{ url_for('static',path=fname, _external=True)}}{% endblock %}
 
 {% block page_style %}
-{{url_for('static', filename='css/characterCounter.css')}}
+{{url_for('static', path='css/characterCounter.css')}}
 {% endblock page_style %}
 
 {%block add_headers%}
@@ -41,8 +41,8 @@
 <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/javascript/javascript.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/display/placeholder.js" defer></script>
 
-<script src="{{ url_for('static', filename='js/mydropdown.js') }}" defer></script>
-<link rel="stylesheet" href="{{url_for('static', filename='css/mydropdown.css')}}">
+<script src="{{ url_for('static', path='js/mydropdown.js') }}" defer></script>
+<link rel="stylesheet" href="{{url_for('static', path='css/mydropdown.css')}}">
 
 {% endblock %}
 
@@ -54,7 +54,7 @@
     <!-- Edit Button -->
     <button class="edit-preference copy-btn" title="Edit">
       <img 
-        src="{{ url_for('static', filename='/assets/icons/edit.svg') }}" 
+        src="{{ url_for('static', path='/assets/icons/edit.svg') }}" 
         alt="Edit" 
         class="icon"
       >
@@ -63,7 +63,7 @@
     <!-- Delete Button -->
     <button class="delete-preference copy-btn" title="Delete">
       <img 
-        src="{{ url_for('static', filename='/assets/icons/delete.svg') }}" 
+        src="{{ url_for('static', path='/assets/icons/delete.svg') }}" 
         alt="Delete" 
         class="icon"
       >
@@ -107,7 +107,7 @@
   </div>
 </template>
 
-<header class="masthead" style="background-image: url('{{url_for('static', filename=fname)}}')">
+<header class="masthead" style="background-image: url('{{url_for('static', path=fname)}}')">
   <div class="container position-relative px-4 px-lg-5">
     <div class="row gx-4 gx-lg-5 justify-content-center">
       <div class="col-md-10 col-lg-8 col-xl-7">
