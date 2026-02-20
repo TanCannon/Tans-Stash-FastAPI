@@ -17,22 +17,24 @@
 
       </style>
 <div>
-  <form class="form-signin"  method="post" action="/dashboard">
+  <form class="form-signin" id="loginForm">
     <!-- <img class="mb-4" src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
     <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
     <div class="form-floating">
-      <input type="text" class="form-control" id="uname" name="uname" placeholder="name@example.com">
+      <input type="text" class="form-control" id="uname" name="username" placeholder="name@example.com">
       <label for="uname">User Name</label>
     </div>
     <div class="form-floating">
-      <input type="password" class="form-control" id="pass" name="pass" placeholder="Password">
+      <input type="password" class="form-control" id="pass" name="password" placeholder="Password">
       <label for="pass">Password</label>
     </div>
     <button class="btn btn-primary w-100 py-2" id="submitButton" type="submit">Sign in</button>
-    <p class="mt-5 mb-3 text-body-secondary">&copy; 2023–2024</p>
+    <p class="mt-5 mb-3 text-body-secondary">&copy; 2023–{{current_year}}</p>
   </form>
 </div>
+
+<script src="{{ url_for('static', path='/js/handelLogin.js') }}"></script>
 <!-- <script src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script> -->
 
 {% endblock %}
