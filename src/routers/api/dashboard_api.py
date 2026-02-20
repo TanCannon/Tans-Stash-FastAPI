@@ -21,18 +21,6 @@ async def login(request: Request, username: str = Form(...), password: str = For
 
     # return templates.TemplateResponse("login.html", {"request": request})
 
-@router.get("/admin/dashboard")
-async def dashboard(request: Request, admin: str = Depends(require_admin)):
-    return {
-        "message": "Welcome to admin dashboard",
-        "admin": admin
-    }
-
-    # return templates.TemplateResponse(
-    #     "dashboard.html",
-    #     {"request": request, "admin": admin}
-    # )
-
 @router.post("/admin/logout")
 async def logout(request: Request):
     request.session.clear()

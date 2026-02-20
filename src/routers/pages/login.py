@@ -7,10 +7,10 @@ from src.core.templates import templates
 # from src.core.flash import flash
 from src.core.context import get_global_context
 
-router = APIRouter(prefix="/admin/login", tags=["pages"])
+router = APIRouter(prefix="/admin", tags=["pages"])
 # templates = Jinja2Templates(directory="templates")
 
-@router.get("")
+@router.get("/login")
 async def login(request: Request):
 
     context = get_global_context(request)
