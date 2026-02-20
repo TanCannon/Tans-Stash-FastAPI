@@ -2,26 +2,20 @@ import os
 from dotenv import load_dotenv
 
 from fastapi import FastAPI, Request
-from starlette import status
 from .database import engine, Base
-from .models.post_model import Post  
-from .models.contact_model import Contact  
-from .models.comment_model import Comment  
-from .models.tool_model import Tool  
-from .models.user_usage_model import ToolUsage  
-# from .models import Base
 
-# from .router import auth, todos, admin, user
 from .routers import register_api_routers
 from .routers import register_page_routers
 
 from starlette.middleware.sessions import SessionMiddleware
 #using for the frontend
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
-from fastapi.templating import Jinja2Templates
 
-from src.filters import register_filters
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+from src.core.templates import templates
+from src.core.params import params
+from src.core.context import get_global_context
 
 app = FastAPI()
 
@@ -49,3 +43,31 @@ register_api_routers(app)
 
 #register page routers
 register_page_routers(app)
+
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc: StarletteHTTPException):
+    context = get_global_context(request)
+    context.update({
+        "request": request,
+        "params": params,
+    })
+
+    return templates.TemplateResponse(
+        "404.html",
+        context,
+        status_code=404,
+    )
+
+@app.exception_handler(500)
+async def internal_server_error_handler(request: Request, exc: Exception):
+    context = get_global_context(request)
+    context.update({
+        "request": request,
+        "params": params,
+    })
+
+    return templates.TemplateResponse(
+        "500.html",
+        context,
+        status_code=500,
+    )

@@ -1,0 +1,26 @@
+import os
+from dotenv import load_dotenv
+
+# Load .env file
+load_dotenv()
+
+
+class Settings:
+    # App
+    DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
+
+    # Security
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "change-me")
+
+    # Admin
+    ADMIN_USERNAME: str = os.getenv("ADMIN_USERNAME", "admin")
+    ADMIN_PASSWORD: str = os.getenv("ADMIN_PASSWORD", "admin")
+
+    # Database
+    # DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./app.db")
+
+    # Pagination
+    # POSTS_PER_PAGE: int = int(os.getenv("POSTS_PER_PAGE", 5))
+
+
+settings = Settings()
