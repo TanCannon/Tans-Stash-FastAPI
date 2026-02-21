@@ -67,7 +67,7 @@ async def read_a_post( blog_sno: int = Path(gt=0), db: db_dependency = None):
     return post
 
 #create a post
-@router.post("/create-blog", response_model=post_schemas.PostResponse, status_code=status.HTTP_201_CREATED)
+@router.put("/create-blog", response_model=post_schemas.PostResponse, status_code=status.HTTP_201_CREATED)
 async def create_post(post: post_schemas.PostCreate, db: db_dependency, admin: str = Depends(require_admin)):
     # Check if slug already exists
     existing = db.query(Post).filter(Post.slug == post.slug).first()
