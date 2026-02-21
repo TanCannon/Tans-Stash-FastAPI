@@ -1,7 +1,7 @@
 User-agent: *
 
 # Disallow sensitive or non-SEO pages
-Disallow: /dashboard/
+Disallow: /admin/
 Disallow: /login/
 Disallow: /logout/
 Disallow: /uploader/

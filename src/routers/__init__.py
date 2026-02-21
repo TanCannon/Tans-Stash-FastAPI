@@ -1,6 +1,6 @@
 from .api import posts_api, contact_api, ascii_tree_to_zip_api, dashboard_api, analytics_api, search_api
 
-from .pages import home, blog, about, disclaimer, faq, privacy, terms, tools, contact, login, dashboard, search, sitemap
+from .pages import home, blog, about, disclaimer, faq, privacy, terms, tools, contact, login, dashboard, search, sitemap, robots_txt
 
 def register_api_routers(app):
     app.include_router(posts_api.router)
@@ -24,3 +24,4 @@ def register_page_routers(app):
     app.include_router(dashboard.router)
     app.include_router(search.router)
     app.include_router(sitemap.router)
+    app.include_router(robots_txt.router)
