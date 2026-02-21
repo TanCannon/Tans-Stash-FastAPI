@@ -19,7 +19,7 @@ document.getElementById("addPostForm").addEventListener("submit", async function
 
     try {
         const response = await fetch("/api/create-blog", {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json"
             },
