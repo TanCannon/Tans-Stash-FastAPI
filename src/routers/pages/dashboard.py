@@ -8,6 +8,7 @@ from math import ceil
 from src.database import SessionLocal
 from src.models.post_model import Post
 from src.models.contact_model import Contact
+from src.models.user_usage_model import ToolUsage
 from src.core.templates import templates
 from src.core.params import params
 from src.core.flash import flash
@@ -303,15 +304,83 @@ async def dashboard_inbox_message(request: Request, db:db_dependency, contact_id
         )
 
 @router.get("/dashboard-analytics", response_class=HTMLResponse)
-async def dashboard_analytics(request: Request):
+async def dashboard_analytics(request: Request, db: db_dependency, page: int = Query(1, ge=1)):
     # Check session
     if request.session.get("admin") != settings.ADMIN_USERNAME:
         return redirect_to_login(request)
 
-    context = get_global_context(request)
+    if db is None:
+        flash(request, "Database is currently unavailable.", "danger")
 
-    context.update({
-        "request": request
-    })
+        context = get_global_context(request)
+        context.update({
+            "request": request,
+            "usageData": [],
+            "prev": "#",
+            "next": "#",
+        })
 
-    return templates.TemplateResponse("dashboard/analytics.html", context)
+        return templates.TemplateResponse(
+            "dashboard/analytics.html",
+            context,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    try:
+        per_page = POSTS_PER_PAGE
+        skip = (page - 1) * per_page
+
+        total = db.query(ToolUsage).count()
+
+        usageData = (
+            db.query(ToolUsage)
+            .order_by(ToolUsage.timestamp.desc())
+            .offset(skip)
+            .limit(per_page)
+            .all()
+        )
+
+        total_pages = ceil(total / per_page)
+
+        prev_page = (
+            str(request.url_for("dashboard_analytics")) + f"?page={page - 1}"
+            if page > 1
+            else "#"
+        )
+
+        next_page = (
+            str(request.url_for("dashboard_analytics")) + f"?page={page + 1}"
+            if page < total_pages
+            else "#"
+        )
+
+        context = get_global_context(request)
+        context.update({
+                "request": request,
+                "usageData": usageData,
+                "prev": prev_page,
+                "next": next_page,
+            })
+
+        return templates.TemplateResponse(
+            "dashboard/analytics.html",
+            context,
+        )
+
+    except Exception as e:
+        print(str(e))
+        flash(request, "Something went wrong. Please visit again later.", "danger")
+
+        context = get_global_context(request)
+        context.update({
+            "request": request,
+            "usageData": [],
+            "prev": "#",
+            "next": "#",
+        })
+
+        return templates.TemplateResponse(
+            "dashboard/analytics.html",
+            context,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
