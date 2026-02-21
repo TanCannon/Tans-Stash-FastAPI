@@ -11,7 +11,7 @@ router = APIRouter(prefix="/faq", tags=["pages"])
 # templates = Jinja2Templates(directory="templates")
 
 @router.get("")
-async def disclaimer(request: Request):
+async def faq(request: Request):
 
     context = get_global_context(request)
 
