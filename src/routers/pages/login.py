@@ -11,7 +11,7 @@ router = APIRouter(prefix="/admin", tags=["pages"])
 # templates = Jinja2Templates(directory="templates")
 
 @router.get("/login")
-async def login(request: Request):
+async def login_page(request: Request):
 
     context = get_global_context(request)
 

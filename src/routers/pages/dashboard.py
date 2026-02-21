@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Query, status, Depends, Form
+from fastapi import APIRouter, Request, Path, Query, status, Depends, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import Annotated
 from sqlalchemy.orm import Session
@@ -51,15 +51,15 @@ def redirect_to_login(request: Request):
     flash(request, "Please login to continue.", "warning")
 
     return RedirectResponse(
-        url=request.url_for("login"),
+        url=request.url_for("login_page"),
         status_code=status.HTTP_302_FOUND,
     )
 
 @router.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request, db: db_dependency, page: int = Query(1, ge=1)):
     # Check session
-    if request.session.get("user") != settings.ADMIN_USERNAME:
-        redirect_to_login(request)
+    if request.session.get("admin") != settings.ADMIN_USERNAME:
+        return redirect_to_login(request)
 
     if db is None:
         flash(request, "Database is currently unavailable.", "danger")
@@ -134,18 +134,29 @@ async def dashboard(request: Request, db: db_dependency, page: int = Query(1, ge
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-@router.get("/dashboard-edit-blog", response_class=HTMLResponse)
-async def dashboard_edit_blog(request: Request):
+@router.get("/dashboard-edit-blog/{post_id}", response_class=HTMLResponse)
+async def dashboard_edit_blog(request: Request, db: db_dependency, post_id: int = Path(ge=1)):
+    # Check session for admin
+    if request.session.get("admin") != settings.ADMIN_USERNAME:
+        return redirect_to_login(request)
+    
+    post = db.query(Post).filter(Post.sno == post_id).first()
+
     context = get_global_context(request)
 
     context.update({
-        "request": request
+        "request": request,
+        "posts":post
     })
 
     return templates.TemplateResponse("edit.html", context)
 
 @router.get("/dashboard-add-blog", response_class=HTMLResponse)
 async def dashboard_add_blog(request: Request):
+    # Check session
+    if request.session.get("admin") != settings.ADMIN_USERNAME:
+        return redirect_to_login(request)
+
     context = get_global_context(request)
 
     context.update({

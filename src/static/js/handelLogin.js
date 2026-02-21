@@ -27,7 +27,7 @@ const loginForm = document.getElementById('loginForm');
                     // logout();
                     // Save token to cookie
                     // document.cookie = `access_token=${data.access_token}; path=/`;
-                    // window.location.href = '/todos/todo-page'; // Change this to your desired redirect page
+                    window.location.href = '/admin/dashboard'; // Change this to your desired redirect page
                 } else {
                     // Handle error
                     const errorData = await response.json();
