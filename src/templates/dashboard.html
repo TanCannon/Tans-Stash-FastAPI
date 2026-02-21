@@ -84,7 +84,7 @@
                             <td>{{post.sno}}</td>
                             <td>{{post.title}}</td>
                             <td>{{post.date}}</td>
-                            <td><a href="{{url_for('dashboard_edit_blog')}}"><button
+                            <td><a href="{{url_for('dashboard_edit_blog', post_id=post.sno)}}"><button
                                         class="btn btn-primary fs-6 fs-md-5 fs-lg-4">Edit</button></a></td>
                             <!--these class are bootstrap styling classes-->
                             <td>
