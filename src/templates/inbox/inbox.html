@@ -6,11 +6,11 @@
 
 {% block og_title %}{{''}}{% endblock %}
 {% block og_description %}{{''}}{% endblock %}
-{% block og_image %}{{ url_for('static',path='assets/img/home-bg.jpg', _external=True)}}{% endblock %}
+{% block og_image %}{{ url_for('static',path='assets/img/home-bg.jpg')}}{% endblock %}
 
 {% block twitter_title %}{{''}}{% endblock %}
 {% block twitter_description %}{{''}}{% endblock %}
-{% block twitter_image %}{{ url_for('static',path='assets/img/home-bg.jpg',  _external=True)}}{% endblock %}
+{% block twitter_image %}{{ url_for('static',path='assets/img/home-bg.jpg')}}{% endblock %}
 
 {% block page_style %}{{url_for('static', path='css/index.css')}}{% endblock page_style %}
 
@@ -42,7 +42,7 @@
                     <!-- variable "posts" is passed in def home() -->
                     {% for contact in contacts %} <!--for loop in jinga-->
                         <div class="post-preview">
-                            <a href="{{ url_for('inbox.getAMsgFromInbox', sno=contact.sno) }}"> 
+                            <a href="{{ url_for('dashboard_inbox_message', contact_id=contact.sno) }}"> 
                                 <h2 class="post-title">{{contact.name}}</h2>
                                 <h3 class="post-subtitle">{{contact.msg}}</h3>
                             </a>
