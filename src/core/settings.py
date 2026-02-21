@@ -9,6 +9,7 @@ class Settings:
     # App
     DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
     BANNER_UPLOAD_PATH: str = os.getenv("BANNER_UPLOAD_PATH")
+    NO_OF_POSTS: int = int(os.getenv("NO_OF_POSTS"))
 
     # Security
     SECRET_KEY: str = os.getenv("SECRET_KEY", "change-me")
