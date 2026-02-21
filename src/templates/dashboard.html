@@ -39,7 +39,7 @@
                 <a href="{{url_for('dashboard_analytics')}}" class="btn btn-primary flex-fill text-center">
                     ANALYTICS
                 </a>
-                <a class="btn btn-primary flex-fill text-center">
+                <a id="dashboardLogoutBtn" class="btn btn-primary flex-fill text-center">
                     LOGOUT
                 </a>
             </div>
@@ -109,5 +109,6 @@
 </div>
 
 <script src="{{url_for('static', path='/js/handelDeleteBtn.js')}}"></script>
+<script src="{{url_for('static', path='/js/handelLogoutBtn.js')}}"></script>
 
 {% endblock %}
