@@ -14,6 +14,8 @@ import logging
 from werkzeug.utils import secure_filename  # I can keep using this
 from src.services.optimise_images_service import save_responsive_images
 
+from src.core.settings import settings
+
 
 
 router = APIRouter(
@@ -129,8 +131,8 @@ async def delete_post(post_id: int, db: db_dependency,admin: str = Depends(requi
 
     return None
 
-#upload/update post hero banner
-@router.post("/update-blog-banner", status_code=status.HTTP_201_CREATED)
+#upload post hero banner
+@router.post("/upload-blog-banner", status_code=status.HTTP_201_CREATED)
 async def upload_image(file1: UploadFile = File(...), _: str = Depends(require_admin)):
     #Validate file presence
     if not file1.filename:
@@ -149,7 +151,9 @@ async def upload_image(file1: UploadFile = File(...), _: str = Depends(require_a
             )
 
         # upload_dir = settings.UPLOAD_LOCATION
-        upload_dir = "D:\\Documents\\professional docs\\PROJECTS\\My projects\\posts website\\post-website-FastAPI\\src\\static\\assets\\img"
+        # upload_dir = "D:\\Documents\\professional docs\\PROJECTS\\My projects\\posts website\\post-website-FastAPI\\src\\static\\assets\\img"
+        upload_dir = settings.BANNER_UPLOAD_PATH
+        print(upload_dir)
         os.makedirs(upload_dir, exist_ok=True)
 
         # Save file

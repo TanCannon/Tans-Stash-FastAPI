@@ -8,6 +8,7 @@ load_dotenv()
 class Settings:
     # App
     DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
+    BANNER_UPLOAD_PATH: str = os.getenv("BANNER_UPLOAD_PATH")
 
     # Security
     SECRET_KEY: str = os.getenv("SECRET_KEY", "change-me")

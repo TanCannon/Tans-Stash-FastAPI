@@ -45,13 +45,13 @@
             </div>
             <hr>
             <h2>Upload a file</h2>
-            <form enctype="multipart/form-data">
+            <form id="postBannerUploadForm" enctype="multipart/form-data">
                 <div class="row align-items-end justify-content-center justify-content-lg-start">
 
                     <!-- File input -->
                     <div class="col-12 col-lg-8 mb-3 mb-lg-0">
                         <label for="file1" class="form-label d-none">Upload file</label>
-                        <input class="form-control" type="file" id="file1" name="file1">
+                        <input class="form-control" type="file" id="file1" name="file1" required>
                     </div>
 
                     <!-- Button -->
@@ -110,5 +110,6 @@
 
 <script src="{{url_for('static', path='/js/handelDeleteBtn.js')}}"></script>
 <script src="{{url_for('static', path='/js/handelLogoutBtn.js')}}"></script>
+<script src="{{url_for('static', path='/js/handelUploadBanner.js')}}"></script>
 
 {% endblock %}
