@@ -17,7 +17,15 @@ from src.core.templates import templates
 from src.core.params import params
 from src.core.context import get_global_context
 
+#enables compression of responses
+from fastapi.middleware.gzip import GZipMiddleware
+
 app = FastAPI()
+
+app.add_middleware(
+    GZipMiddleware,
+    minimum_size=500
+)
 
 load_dotenv()
 # Session middleware (ONLY used by pages)
