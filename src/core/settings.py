@@ -19,7 +19,7 @@ class Settings:
     ADMIN_PASSWORD: str = os.getenv("ADMIN_PASSWORD", "admin")
 
     # Database
-    # DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./app.db")
+    DATABASE_URL: str = os.getenv("DATABASE_URL")
 
     # Pagination
     # POSTS_PER_PAGE: int = int(os.getenv("POSTS_PER_PAGE", 5))
