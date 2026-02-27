@@ -12,11 +12,13 @@ from src.models.post_model import Post
 
 from src.core.context import get_global_context
 
-from src.core.settings import settings
+from src.core.params import params
 
 router = APIRouter(    
     tags=["pages"]
 )
+
+POSTS_PER_PAGE = params['no_of_posts'] 
 
 def get_db():
     try:
@@ -62,7 +64,7 @@ async def search_page(
             context
         )
 
-    per_page = settings.NO_OF_POSTS
+    per_page = POSTS_PER_PAGE
 
     base_query = db.query(Post).filter(
         or_(
