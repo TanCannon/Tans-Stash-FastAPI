@@ -21,4 +21,4 @@ Allow: /static/assets/
 Allow: /static/favicon/
 
 # Sitemap
-Sitemap: https://tancannon2003.pythonanywhere.com/sitemap.xml
+Sitemap: https://tansstash.com/sitemap.xml

@@ -45,7 +45,7 @@
             {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
-            "@id": "https://tancannon2003.pythonanywhere.com/blog/{{ post.slug | e }}#blogpost",
+            "@id": "https://tansstash.com/blog/{{ post.slug | e }}#blogpost",
             "headline": "{{ post.title | e }}",
             "alternativeHeadline": "{{ post.tag_line | e }}",
             "description": "{{ post.description | striptags | truncate(200) | e }}",
@@ -53,11 +53,11 @@
             "author": {
                 "@type": "Person",
                 "name": "Tanmaya Kumar Naik",
-                "url": "https://tancannon2003.pythonanywhere.com/about"
+                "url": "https://tansstash.com/about"
             },
             "publisher": {
                 "@type": "Organization",
-                "@id": "https://tancannon2003.pythonanywhere.com/#organization",
+                "@id": "https://tansstash.com/#organization",
                 "name": "{{params["website_name"]}}",
                 "logo": {
                 "@type": "ImageObject",
