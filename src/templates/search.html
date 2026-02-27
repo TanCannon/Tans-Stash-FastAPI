@@ -30,7 +30,7 @@
                             "@type": "ListItem",
                             "position": 1,
                             "name": "Home",
-                            "item": "https://tancannon2003.pythonanywhere.com/"
+                            "item": "https://tansstash.com/"
                         }
                     ]
                 },
@@ -41,8 +41,8 @@
                     "url": "{{ request.url }}",
                     "name": "{{ params['website_name'] }} - Home",
                     "description": "Explore {{ params['website_name'] }} – a blog and tool hub by Tanmaya Kumar Naik, covering the latest in technology, software development, and automation. Discover insightful articles and free online tools.",
-                    "isPartOf": { "@id": "https://tancannon2003.pythonanywhere.com/#website" },
-                    "publisher": { "@id": "https://tancannon2003.pythonanywhere.com/#organization" },
+                    "isPartOf": { "@id": "https://tansstash.com/#website" },
+                    "publisher": { "@id": "https://tansstash.com/#organization" },
                     "inLanguage": "en",
                     "primaryImageOfPage": {
                         "@type": "ImageObject",
@@ -52,7 +52,7 @@
                     },
                     "potentialAction": {
                         "@type": "SearchAction",
-                        "target": "https://tancannon2003.pythonanywhere.com/search?q={search_term_string}",
+                        "target": "https://tansstash.com/search?q={search_term_string}",
                         "query-input": "required name=search_term_string"
                     }
                 },
@@ -67,7 +67,7 @@
                         {
                             "@type": "ListItem",
                             "position": {{ loop.index }},
-                            "url": "https://tancannon2003.pythonanywhere.com/blog/{{ post.slug }}",
+                            "url": "https://tansstash.com/blog/{{ post.slug }}",
                             "name": "{{ post.title | e }}"
                         }{% if not loop.last %},{% endif %}
                         {% endfor %}
