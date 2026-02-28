@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from ..database import Base
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, DateTime
+from sqlalchemy import Column, Integer, String, Text, DateTime
 
 
 class Post(Base):

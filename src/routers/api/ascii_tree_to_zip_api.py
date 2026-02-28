@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Form
 from starlette import status
-from src.schemas import unicode_tree_schemas
 from fastapi.responses import FileResponse
 import tempfile, os, shutil
 from src.services.ascii_tree_to_zip_service import create_structure_from_ascii, zip_folder

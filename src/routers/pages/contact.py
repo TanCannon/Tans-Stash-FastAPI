@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, HTTPException, Form
+from fastapi import APIRouter, Depends, Request, Form
 from fastapi.responses import RedirectResponse
 
 from src.database import SessionLocal

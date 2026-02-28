@@ -5,7 +5,6 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 
 from fastapi.responses import HTMLResponse
-from sqlalchemy.exc import SQLAlchemyError
 from math import ceil
 
 from src.models.post_model import Post

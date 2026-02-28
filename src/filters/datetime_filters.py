@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import timezone
 # import humanize
 
 def human_date(value):

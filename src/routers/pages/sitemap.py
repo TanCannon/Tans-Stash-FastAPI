@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Request, Depends
-from fastapi.responses import Response
 
 from fastapi.routing import APIRoute
 

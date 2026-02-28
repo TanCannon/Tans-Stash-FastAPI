@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 
 from src.models.user_usage_model import ToolUsage
-from src.schemas import user_usage_schemas
 from src.admin.auth import require_admin
 
 router = APIRouter(

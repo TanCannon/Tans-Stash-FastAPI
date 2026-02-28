@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Request, Path, Query, status, Depends, Form
+from fastapi import APIRouter, Request, Path, Query, status, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import Annotated
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError
 from math import ceil
 
 from src.database import SessionLocal
@@ -17,14 +16,7 @@ from src.core.context import get_global_context
 from src.core.settings import settings
 
 from fastapi import Form
-from fastapi.responses import RedirectResponse, JSONResponse
-from datetime import datetime
-import os
-import logging
-from werkzeug.utils import secure_filename
-
-
-
+from fastapi.responses import RedirectResponse
 
 router = APIRouter(
     prefix="/admin",

@@ -1,8 +1,5 @@
 from fastapi import APIRouter, Depends, Request, HTTPException, status
 
-from fastapi.responses import RedirectResponse
-from fastapi.templating import Jinja2Templates
-
 from src.database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session

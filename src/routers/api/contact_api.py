@@ -1,10 +1,9 @@
-from fastapi import Depends, APIRouter, HTTPException, Path, Query, Request
+from fastapi import Depends, APIRouter, HTTPException, Path, Query
 from src.models.contact_model import Contact
 from src.database import SessionLocal
 from starlette import status
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError
-from typing import Annotated, List
+from typing import Annotated
 from src.schemas import contact_schemas
 from src.admin.auth import require_admin
 

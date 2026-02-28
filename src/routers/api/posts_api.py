@@ -1,9 +1,9 @@
-from fastapi import Depends, APIRouter, HTTPException, Path, Query, Request, UploadFile, File
+from fastapi import Depends, APIRouter, HTTPException, Path, Query, UploadFile, File
 from src.models.post_model import Post
 from src.database import SessionLocal
 from starlette import status
 from sqlalchemy.orm import Session
-from typing import Annotated, List
+from typing import Annotated
 from src.schemas import post_schemas
 from datetime import datetime, timezone
 

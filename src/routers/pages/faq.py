@@ -1,6 +1,4 @@
-from fastapi import APIRouter, Depends, Request, HTTPException, status
-
-from fastapi.templating import Jinja2Templates
+from fastapi import APIRouter,Request
 
 from src.core.templates import templates
 
