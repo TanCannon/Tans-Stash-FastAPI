@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% set fname = 'assets/img/default-hero-image' %}
 {% if post %}
-    {%if post.img_file != ''%} <!--handel image file name is not given-->
+    {% if post.img_file %} <!--handel image file name is not given-->
         {% set fname_full = 'assets/img/'+ post.img_file %} <!---created a jinger variable to be able to change the bg image-->
         {% set fname_parts = post.img_file.rsplit('.', 1) %}
         {% set fname = 'assets/img/' + fname_parts[0] %}
