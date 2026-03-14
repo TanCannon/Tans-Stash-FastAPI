@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 {% extends "layout.html" %}
 {% set fname = 'assets/img/default-hero-image' %}
 {% if post %}
@@ -175,4 +176,183 @@
             </div>
         </article>
         
+=======
+{% extends "layout.html" %}
+{% set fname = 'assets/img/default-hero-image' %}
+{% if post %}
+    {%if post.img_file %} <!--handel image file name is not given-->
+        {% set fname_full = 'assets/img/'+ post.img_file %} <!---created a jinger variable to be able to change the bg image-->
+        {% set fname_parts = post.img_file.rsplit('.', 1) %}
+        {% set fname = 'assets/img/' + fname_parts[0] %}
+    {%else%}
+        {% set fname =  'assets/img/default-hero-image' %}
+    {% endif %}
+
+
+    {% block title %}{{ post.title }}{% endblock %}
+    {% block meta_description %}{{ post.description or params['website_description'] }}{% endblock %}
+
+    {% block og_title %}{{ post.title }}{% endblock %}
+    {% block og_description %}{{ post.description }}{% endblock %}
+    {% block og_image %}{{ url_for('static',path=fname)}}{% endblock %}
+
+    {% block twitter_title %}{{ post.title }}{% endblock %}
+    {% block twitter_description %}{{ post.description }}{% endblock %}
+    {% block twitter_image %}{{ url_for('static',path=fname)}}{% endblock %}
+
+    {% block page_style %}{{url_for('static', path='css/post.css')}}{% endblock page_style %}
+
+    {%block add_headers%}
+
+        {# comment section css and js #}
+        <link rel="preload" href="{{url_for('static', path='css/comments/commentsSection.css')}}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <script src="{{ url_for('static', path='js/comments/commentSection.js') }}" defer></script>
+        {# END #}
+        
+        <link 
+        rel="preload" 
+        as="image" 
+        imagesrcset="
+            {{ url_for('static', path=fname + '-400.webp') }} 400w,
+            {{ url_for('static', path=fname + '-800.webp') }} 800w,
+            {{ url_for('static', path=fname + '-1200.webp') }} 1200w"
+        imagesizes="100vw"
+        fetchpriority="high"
+        type="image/webp">
+
+        <script type="application/ld+json">
+            {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "@id": "https://tansstash.com/blog/{{ post.slug | e }}#blogpost",
+            "headline": "{{ post.title | e }}",
+            "alternativeHeadline": "{{ post.tag_line | e }}",
+            "description": "{{ post.description | striptags | truncate(200) | e }}",
+            "image": "{{ url_for('static', path=fname) }}",
+            "author": {
+                "@type": "Person",
+                "name": "Tanmaya Kumar Naik",
+                "url": "https://tansstash.com/about"
+            },
+            "publisher": {
+                "@type": "Organization",
+                "@id": "https://tansstash.com/#organization",
+                "name": "{{params["website_name"]}}",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "{{ url_for('static', path='favicon.ico') }}"
+                }
+            },
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "{{ request.url }}"
+            },
+            "articleSection": "Technology",
+            "keywords": "{{ post.tag_line | e }}",
+            "articleBody": "{{ post.content | striptags | truncate(400) | replace('\n', ' ') | e }}",
+            "datePublished": "{{ post.date }}",
+            "dateModified": "{{ post.last_modified if post.last_modified else post.date }}"
+            }
+        </script>
+
+    {%endblock add_headers%}
+
+{% endif %}
+
+<!--function written in jinga2 (they say it macro) to render the table of content-->
+{% macro render_toc(items) %}
+<ul>
+  {% for item in items %}
+    <li>
+      <a href="#{{ item.id }}">{{ item.title }}</a>
+      {% if item.children %}
+        {{ render_toc(item.children) }}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+{% endmacro %}
+
+{% block body %}
+        
+    <!-- Page Header-->
+    <header class="masthead">
+        <picture>
+            <!-- Modern WebP -->
+            <source 
+                srcset="{{ url_for('static', path=fname + '-400.webp') }} 400w,
+                        {{ url_for('static', path=fname + '-800.webp') }} 800w,
+                        {{ url_for('static', path=fname + '-1200.webp') }} 1200w"
+                sizes="100vw"
+                type="image/webp">
+
+            <!-- JPEG fallback -->
+            <source 
+                srcset="{{ url_for('static', path=fname + '-400.jpg') }} 400w,
+                        {{ url_for('static', path=fname + '-800.jpg') }} 800w,
+                        {{ url_for('static', path=fname + '-1200.jpg') }} 1200w"
+                sizes="100vw"
+                type="image/jpeg">
+
+            <!-- Default fallback -->
+            <img 
+                src="{{ url_for('static', path=fname + '-800.jpg')}}"
+                sizes="100vw"
+                alt="{{ post.title | default('') }}"
+                class="header-img"
+                fetchpriority="high"
+                decoding="async"
+                loading="eager">
+        </picture>
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <!-- <h1>Man must explore, and this is exploration at its greatest</h1> -->
+                            <!-- i accssing these lines from python file in post_rout() -->
+                            <h1>{{post.title | default('')}}</h1>
+                            <h2 class="subheading">{{post.tag_line}}</h2>
+                            <!-- <span class="meta">
+                                Posted by
+                                <a href="#!">Admin name</a>
+                                {{post.date}}
+                            </span> -->
+                            <span class="meta">
+                                Posted on
+                                {{post.date | human_date }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        {% if (post.last_modified is not none) %}
+                            <p class="meta">
+                                <blockquote>
+                                    <em><strong>Updated on:</strong>
+                                    {{post.last_modified | human_date }}</em>
+                            </blockquote>
+                            </p>
+                        {% endif %}
+                        <aside class="toc">
+                            <nav aria-label="Table of Contents">
+                                <h3>Table of Contents</h3>
+                                {{ render_toc(toc) }}
+                            </nav>
+                        </aside>
+                        {{content|safe}}
+                        <div>
+                            {# {% include "components/CommentSection.html" %} #}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+        
+>>>>>>> Stashed changes
 {% endblock %}

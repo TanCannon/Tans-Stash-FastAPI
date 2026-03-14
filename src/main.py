@@ -20,18 +20,36 @@ from src.core.context import get_global_context
 #enables compression of responses
 from fastapi.middleware.gzip import GZipMiddleware
 
+#enable CORS
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
 
 app.add_middleware(
     GZipMiddleware,
     minimum_size=500
 )
+# Read allowed origins from env, fallback to common dev hosts
+allowed_origins = os.getenv(
+    "CORS_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173"
+).split(",")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 load_dotenv()
 # Session middleware (ONLY used by pages)
 app.add_middleware(
     SessionMiddleware,
-    secret_key=os.getenv("SECRET_KEY")
+    secret_key=os.getenv("SECRET_KEY"),
+    https_only=False, #by default the session cookies are send over https only, doing this ensures it runs locally too
+    same_site="lax" #change it to none in production
 )
 
 
