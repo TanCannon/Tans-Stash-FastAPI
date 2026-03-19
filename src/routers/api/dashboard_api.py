@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from src.database import SessionLocal
 from src.models.post_model import Post
+from src.models.contact_model import Contact
 
 from src.admin.auth import require_admin
 
@@ -73,6 +74,33 @@ async def admin_get_posts(
 
     return {
         "posts": posts,
+        "total_pages": total_pages,
+        "current_page": page
+    }
+
+@router.get("/admin-get-contacts")
+async def admin_get_posts(
+    request: Request,
+    db: db_dependency,
+    page: int = Query(1, ge=1),
+    _: str = Depends(require_admin)
+):
+    limit = 5
+    skip = (page - 1) * limit
+
+    total = db.query(Contact).count()
+    contacts = (
+        db.query(Contact)
+            .order_by(Contact.date.desc())
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    total_pages = math.ceil(total / limit)
+
+    return {
+        "posts": contacts,
         "total_pages": total_pages,
         "current_page": page
     }
