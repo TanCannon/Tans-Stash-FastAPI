@@ -67,3 +67,17 @@ async def create_contact(db: db_dependency, contact_request: contact_schemas.Con
     db.add(contact_model)
     db.commit()
 
+@router.delete("/delete-contact/{contact_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_a_contact(db: db_dependency, contact_id: int = Path(gt=0), _: str = Depends(require_admin)):
+    #base case
+    #check if contact exists
+    contact = db.query(Contact).filter(Contact.sno == contact_id).first()
+
+    if contact is None:
+        raise HTTPException(status_code=404, detail="Contact not found.")
+    
+    #delete the contact
+    db.delete(contact)
+    db.commit()
+
+    return
