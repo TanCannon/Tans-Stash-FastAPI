@@ -12,6 +12,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.responses import JSONResponse
 
 from src.core.templates import templates
 from src.core.params import params
@@ -72,6 +73,14 @@ register_page_routers(app)
 
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc: StarletteHTTPException):
+    # API routes → return JSON
+    if request.url.path.startswith("/api"):
+        return JSONResponse(
+            status_code=404,
+            content={"detail": exc.detail or "Not Found"}
+        )
+    
+    # Frontend → return HTML
     context = get_global_context(request)
     context.update({
         "request": request,
@@ -86,6 +95,14 @@ async def not_found_handler(request: Request, exc: StarletteHTTPException):
 
 @app.exception_handler(500)
 async def internal_server_error_handler(request: Request, exc: Exception):
+    # API routes → return JSON
+    if request.url.path.startswith("/api"):
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Internal Server Error"}
+        )
+
+    # Frontend → return HTML
     context = get_global_context(request)
     context.update({
         "request": request,
