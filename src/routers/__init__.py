@@ -26,6 +26,5 @@ def register_page_routers(app):
     app.include_router(search.router)
     app.include_router(sitemap.router)
     app.include_router(robots_txt.router)
-    app.include_router(robots_txt.router)
     app.include_router(favicon_ico.router)
     app.include_router(ads_txt.router)
