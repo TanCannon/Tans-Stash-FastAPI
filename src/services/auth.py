@@ -39,24 +39,24 @@ def create_user(db: Session, create_user_request: user_schemas.UserCreate):
     user = user_model.User(
         username=create_user_request.username,
         email=create_user_request.email,
-        role=create_user_request.role,
-        password_hash=bcrypt_context.hash(create_user_request.password_hash)
+        # role=create_user_request.role,
+        password_hash=bcrypt_context.hash(create_user_request.password)
     )
     db.add(user)
     db.commit()
-    db.refresh()
+    db.refresh(user)
     return user
 
-def authenticate_user(username: str, password: str, db: Session):
-    user = db.query(user_model.User).filter(user_model.User.username == username).first()
+def authenticate_user(email: str, password: str, db: Session):
+    user = db.query(user_model.User).filter(user_model.User.email == email).first()
     if not user:
         return None
     if not bcrypt_context.verify(password, user.password_hash):
         return None
     return user
 
-def provide_token_on_login(username: str, password: str, db: Session):
-    user = authenticate_user(username, password, db)
+def provide_token_on_login(email: str, password: str, db: Session):
+    user = authenticate_user(email, password, db)
     if user is None:
         return None
 
