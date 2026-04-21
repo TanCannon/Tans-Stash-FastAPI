@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text
-from ..database import Base  # adjust to your project name
+from ..database import Base
 
 
 class Tool(Base):
@@ -12,3 +12,8 @@ class Tool(Base):
 
     def __repr__(self):
         return f"<Tool {self.slug}>"
+    
+class Endpoint(Base):
+    __tablename__ = "endpoints"
+    id = Column(String, primary_key=True)
+    path = Column(String)
