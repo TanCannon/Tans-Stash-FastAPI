@@ -65,7 +65,7 @@ def provide_token_on_login(email: str, password: str, db: Session):
 
     db_token = auth_token_model.RefreshToken(
         user_id=user.id,
-        token=bcrypt_context.hash(refresh_token),
+        token=refresh_token,
         expiry=datetime.now(timezone.utc) + timedelta(days=7)
     )
     db.add(db_token)
@@ -95,3 +95,17 @@ def decode_access_token(token: str):
 
     except JWTError:
         return None
+
+def logout(db: Session, refresh_token: str):
+    db_token = db.query(auth_token_model.RefreshToken).filter(
+        auth_token_model.RefreshToken.token == refresh_token
+    ).first()
+
+    if db_token:
+        db_token.is_revoked = True
+        db.commit()
+
+    return {
+        "success": True,
+        "message": "Logged out successfully"
+        }
