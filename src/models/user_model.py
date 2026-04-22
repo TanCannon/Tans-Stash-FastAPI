@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime, Numeric
 from sqlalchemy.orm import relationship
 
 from src.database import Base
@@ -33,6 +33,8 @@ class APIKey(Base):
 class Plan(Base):
     __tablename__ = "plans"
     id = Column(String, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
+    price = Column(Numeric(precision=10, scale=2))
     request_limit = Column(Integer)
     rate_limit = Column(Integer)
 
