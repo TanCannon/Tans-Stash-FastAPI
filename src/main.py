@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 
 from fastapi import FastAPI, Request
+from contextlib import asynccontextmanager
 from .database import engine, Base
 
 from .routers import register_api_routers
@@ -24,7 +25,20 @@ from fastapi.middleware.gzip import GZipMiddleware
 #enable CORS
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app):
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("Database connected successfully.")
+    except Exception:
+        print("Database not available. App starting without DB.")
+
+    yield  # THIS IS MANDATORY
+
+    # optional shutdown logic
+    print("App shutting down...")
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     GZipMiddleware,
@@ -52,15 +66,6 @@ app.add_middleware(
     https_only=False, #by default the session cookies are send over https only, doing this ensures it runs locally too
     same_site="lax" #change it to none in production
 )
-
-
-@app.on_event("startup")
-async def startup():
-    try:
-        Base.metadata.create_all(bind=engine)
-        print("Database connected successfully.")
-    except Exception as e:
-        print("Database not available. App starting without DB.")
 
 #setting up static files directory
 app.mount("/static", StaticFiles(directory="src/static"), name="static")
