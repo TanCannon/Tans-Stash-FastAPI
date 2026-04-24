@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime, Numeric
 from sqlalchemy.orm import relationship
+from datetime import datetime, timezone
 
 from src.database import Base
 
@@ -32,11 +33,12 @@ class APIKey(Base):
 
 class Plan(Base):
     __tablename__ = "plans"
-    id = Column(String, primary_key=True)
+    id = Column(String, primary_key=True, default=gen_uuid)
     name = Column(String, unique=True, nullable=False)
     price = Column(Numeric(precision=10, scale=2))
     request_limit = Column(Integer)
     rate_limit = Column(Integer)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
 class Subscription(Base):
     __tablename__ = "subscriptions"
