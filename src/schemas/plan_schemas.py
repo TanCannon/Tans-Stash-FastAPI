@@ -7,6 +7,7 @@ class PlanBase(BaseModel):
     price: condecimal(max_digits=10, decimal_places=2)
     request_limit:  int
     rate_limit: int
+    tool_ids: List[int]
 
 class PlanCreate(PlanBase):
     pass

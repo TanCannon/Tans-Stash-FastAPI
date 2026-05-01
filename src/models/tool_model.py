@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text
 from ..database import Base
+from sqlalchemy.orm import relationship
 
 
 class Tool(Base):
@@ -9,6 +10,12 @@ class Tool(Base):
     slug = Column(String(255), unique=True, nullable=False, index=True)
     name = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
+
+    plan_products = relationship(
+        "PlanProduct",
+        back_populates="tool",
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"<Tool {self.slug}>"
