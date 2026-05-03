@@ -8,9 +8,9 @@ class PlanBase(BaseModel):
     request_limit:  int
     rate_limit: int
     tool_ids: List[int]
-
+     
 class PlanCreate(PlanBase):
-    pass
+    model_config = ConfigDict(from_attributes=True)
 
 class PlanResponse(PlanBase):
     id: str
@@ -18,7 +18,7 @@ class PlanResponse(PlanBase):
     model_config = ConfigDict(from_attributes=True)
 
 # for pagination of the posts
-class PaginatedPosts(BaseModel):
+class PaginatedPlans(BaseModel):
     items: List[PlanResponse]
     total: int
     skip: int
