@@ -1,4 +1,5 @@
 from decimal import Decimal
+import pytest
 
 from sqlalchemy.orm import Session
 from src.models.user_model import Plan, PlanProduct
@@ -13,8 +14,17 @@ from ..conftest import db
 create_plan service tests
 ============================
 '''
-#1. Test: Successful Plan Creation
+# 1. Test: Successful Plan Creation
 def test_create_plan_success(db: Session):
+    # Seed tools in DB
+    tools = [
+        Tool(id=1, name="Tool1", slug="tool-1"),
+        Tool(id=2, name="Tool2", slug="tool-2"),
+        Tool(id=3, name="Tool3", slug="tool-3"),
+    ]
+    db.add_all(tools)
+    db.commit()
+
     data = PlanCreate(
         name="Pro Plan",
         price=199.99,
@@ -23,18 +33,19 @@ def test_create_plan_success(db: Session):
         tool_ids=[1, 2, 3]
     )
 
+    # Call service
     plan = create_plan(db, data)
 
-    # 🔹 Check plan created
+    # Assertions
     assert plan.id is not None
     assert plan.name == "Pro Plan"
     assert plan.price == Decimal("199.99")
 
-    # 🔹 Verify DB state
+    # Verify DB state
     db_plan = db.query(Plan).filter(Plan.id == plan.id).first()
     assert db_plan is not None
 
-    # 🔹 Check PlanProduct entries
+    # Check PlanProduct entries
     mappings = db.query(PlanProduct).filter(
         PlanProduct.plan_id == plan.id
     ).all()
@@ -43,6 +54,22 @@ def test_create_plan_success(db: Session):
 
     tool_ids = [m.tool_id for m in mappings]
     assert set(tool_ids) == {1, 2, 3}
+# 1.1 Test: Invalid Tool IDs
+def test_create_plan_invalid_tool_ids(db: Session):
+    # 🔹 Seed only 1 tool
+    db.add(Tool(id=1, name="Tool1", slug="tool-1"))
+    db.commit()
+
+    data = PlanCreate(
+        name="Invalid Plan",
+        price=99.99,
+        request_limit=1000,
+        rate_limit=10,
+        tool_ids=[1, 2]  # 2 does not exist
+    )
+
+    with pytest.raises(InvalidToolIdsException):
+        create_plan(db, data)
 
 #2. Test: Empty tool_ids
 def test_create_plan_without_tools(db):
@@ -64,6 +91,11 @@ def test_create_plan_without_tools(db):
 
 #3. Test: Plan ID generated before commit, This verifies your flush() usage is correct.
 def test_plan_id_generated_before_commit(db):
+    # Seed tools in DB
+    tools = Tool(id=1, name="Tool1", slug="tool-1")
+    db.add(tools)
+    db.commit()
+
     data = PlanCreate(
         name="Flush Test",
         price=10,
@@ -104,7 +136,7 @@ def test_get_plan_without_tools(db):
 
     assert len(result) == 1
     assert result[0]["name"] == "Basic"
-    assert result[0]["tools"] == []
+    assert result[0]["tool_ids"] == []
 
 # 3. Test: Single Plan with Tools
 def test_get_plan_with_tools(db):
@@ -134,7 +166,7 @@ def test_get_plan_with_tools(db):
     tools = result[0]["tools"]
 
     assert len(tools) == 2
-    assert set(tools) == {"Tool1", "Tool2"}
+    assert set(tools) == {1, 2}
 
 # 4. Test: Multiple Plans with Different Tools    
 def test_multiple_plans_with_tools(db):
@@ -228,7 +260,7 @@ def test_get_plan_without_tools(db):
 
     assert result is not None
     assert result["name"] == "Basic"
-    assert result["tools"] == []
+    assert result["tool_ids"] == []
 
 #3. Test: Plan With Tools
 def test_get_plan_with_tools(db):
@@ -254,8 +286,8 @@ def test_get_plan_with_tools(db):
     result = get_plan(db, plan.id)
 
     assert result["name"] == "Pro"
-    assert len(result["tools"]) == 2
-    assert set(result["tools"]) == {"Tool1", "Tool2"}
+    assert len(result["tool_ids"]) == 2
+    assert set(result["tool_ids"]) == {1, 2}
 
 # 4. Test: Invalid Tool Mapping (Edge Case)
 def test_get_plan_with_invalid_tool_mapping(db):
@@ -270,7 +302,7 @@ def test_get_plan_with_invalid_tool_mapping(db):
     result = get_plan(db, plan.id)
 
     # Join fails → no tools returned
-    assert result["tools"] == []
+    assert result["tool_ids"] == []
 
 # 5. Test: Multiple Plans Isolation
 def test_get_plan_isolated(db):
@@ -296,7 +328,7 @@ def test_get_plan_isolated(db):
     result = get_plan(db, p1.id)
 
     assert result["name"] == "Basic"
-    assert result["tools"] == ["Tool1"]
+    assert result["tool_ids"] == [1]
 
 '''
 =============================
@@ -333,10 +365,10 @@ def test_update_plan_basic_fields(db):
 
     updated = update_plan(db, plan.id, data)
 
-    assert updated.name == "Updated"
-    assert updated.price == 50
-    assert updated.request_limit == 500
-    assert updated.rate_limit == 50
+    assert updated["name"] == "Updated"
+    assert updated["price"] == 50
+    assert updated["request_limit"] == 500
+    assert updated["rate_limit"] == 50
 
 # 3. Test: Replace Tools Completely (CORE LOGIC)
 def test_update_plan_replaces_tools(db):
@@ -377,6 +409,25 @@ def test_update_plan_replaces_tools(db):
 
     assert len(mappings) == 1
     assert mappings[0].tool_id == t3.id
+
+# update plans with invalid/non existing tool ids
+def test_update_plan_invalid_tools(db):
+    # Create plan
+    plan = Plan(name="Plan", price=10, request_limit=100, rate_limit=10)
+    db.add(plan)
+    db.commit()
+
+    #update with invalid tool ids
+    data = PlanCreate(
+        name="Plan",
+        price=10,
+        request_limit=100,
+        rate_limit=10,
+        tool_ids=[2,3]
+    )
+
+    with pytest.raises(Exception):
+        update_plan(db, plan.id, data)
 
 # 4. Test: Duplicate tool_ids handled
 def test_update_plan_duplicate_tool_ids(db):
@@ -457,8 +508,8 @@ def test_update_plan_fields_and_tools(db):
 
     updated = update_plan(db, plan.id, data)
 
-    assert updated.name == "New"
-    assert updated.price == 99
+    assert updated["name"] == "New"
+    assert updated["price"] == 99
 
     mappings = db.query(PlanProduct).filter(
         PlanProduct.plan_id == plan.id
