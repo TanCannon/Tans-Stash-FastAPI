@@ -84,16 +84,13 @@ def validate_api_key(db, incoming_key: str):
         "api_key_id": key.id
     }
 
-def has_access_to_tool(db, user_id: str, tool_id: str):
-    if (user_id == '' or tool_id == ''):
+def has_access_to_tool(db, key_hash: str, tool_id: str):
+
+    if not key_hash or not tool_id:
         return False
-    
-    return db.query(PlanProduct).join(
-        Subscription, Subscription.plan_id == PlanProduct.plan_id
-    ).filter(
-        Subscription.user_id == user_id,
-        Subscription.status == "active",
-        PlanProduct.tool_id == tool_id
+
+    return db.query(APIKey).filter(
+        APIKey.key_hash == key_hash,
+        APIKey.tool_id == tool_id,
+        APIKey.is_active == True
     ).first() is not None
-
-
