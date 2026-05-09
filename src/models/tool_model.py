@@ -23,6 +23,12 @@ class Tool(Base):
         cascade="all, delete-orphan"
     )
 
+    api_keys = relationship(
+        "APIKey",
+        back_populates="tool",
+        cascade="all, delete-orphan"
+    )
+
     def __repr__(self):
         return f"<Tool {self.slug}>"
     

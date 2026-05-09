@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime, Numeric
 from sqlalchemy.orm import relationship
+from sqlalchemy import UniqueConstraint
 from datetime import datetime, timezone
 
 from src.database import Base
@@ -26,11 +27,21 @@ class APIKey(Base):
     __tablename__ = "api_keys"
     id = Column(String, primary_key=True, default=gen_uuid)
     user_id = Column(String, ForeignKey("users.id"))
+    tool_id = Column(String, ForeignKey("tools.id"))
     key_hash = Column(String)
     is_active = Column(Boolean, default=True)
     expires_at = Column(DateTime, nullable=True)
 
     user = relationship("User")
+
+    tool = relationship(
+        "Tool",
+        back_populates="api_keys"
+    )
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "tool_id", name="uq_user_tool_key"),
+    )
 
 class Plan(Base):
     __tablename__ = "plans"
