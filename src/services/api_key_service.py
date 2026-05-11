@@ -1,6 +1,7 @@
 import secrets
 import hashlib
 from sqlalchemy.orm import Session
+from datetime import datetime, timezone
 
 from src.models.user_model import User, APIKey, Subscription, PlanProduct
 from src.models.tool_model import Tool
@@ -93,4 +94,23 @@ def has_access_to_tool(db, key_hash: str, tool_id: str):
         APIKey.key_hash == key_hash,
         APIKey.tool_id == tool_id,
         APIKey.is_active == True
+    ).first() is not None
+
+
+def check_subscription(db, user_id: str, tool_id: str):
+
+    if not user_id or not tool_id:
+        return False
+
+    now = datetime.now(timezone.utc)
+
+    return db.query(Subscription).join(
+        PlanProduct,
+        Subscription.plan_id == PlanProduct.plan_id
+    ).filter(
+        Subscription.user_id == user_id,
+        Subscription.status == "active",
+        Subscription.start_date <= now,
+        Subscription.end_date >= now,
+        PlanProduct.tool_id == tool_id
     ).first() is not None
