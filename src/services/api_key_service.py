@@ -11,7 +11,7 @@ API_KEY_PREFIX = "ts_live_"
 def hash_key(key: str) -> str:
     return hashlib.sha256(key.encode()).hexdigest()
 
-def create_api_key(user_id: str, tool_id: str, db: Session):
+def create_api_key(user_id: str, tool_id: int, db: Session):
     """
     Generate an API key and store only its hash.
     Returns the raw key ONLY once.
@@ -85,13 +85,13 @@ def validate_api_key(db, incoming_key: str):
         "api_key_id": key.id
     }
 
-def has_access_to_tool(db, key_hash: str, tool_id: str):
+def has_access_to_tool(db, key_id: str, tool_id: str):
 
-    if not key_hash or not tool_id:
+    if not key_id or not tool_id:
         return False
 
     return db.query(APIKey).filter(
-        APIKey.key_hash == key_hash,
+        APIKey.id == key_id,
         APIKey.tool_id == tool_id,
         APIKey.is_active == True
     ).first() is not None

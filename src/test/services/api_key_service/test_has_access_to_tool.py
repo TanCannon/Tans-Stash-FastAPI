@@ -37,10 +37,11 @@ def test_has_access_success(db):
 
     db.add(api_key)
     db.commit()
+    db.refresh(api_key)
 
     result = has_access_to_tool(
         db,
-        "hashed_key_123",
+        api_key.id,
         tool.id
     )
 
@@ -61,7 +62,7 @@ def test_has_access_invalid_key(db):
 
     result = has_access_to_tool(
         db,
-        "invalid_key",
+        "invalid_key_id",
         tool.id
     )
 
@@ -96,10 +97,11 @@ def test_has_access_inactive_key(db):
 
     db.add(api_key)
     db.commit()
+    db.refresh(api_key)
 
     result = has_access_to_tool(
         db,
-        "hashed_key_123",
+        api_key.id,
         tool.id
     )
 
@@ -140,10 +142,11 @@ def test_has_access_wrong_tool(db):
 
     db.add(api_key)
     db.commit()
+    db.refresh(api_key)
 
     result = has_access_to_tool(
         db,
-        "hashed_key_123",
+        api_key.id,
         tool2.id
     )
 
@@ -188,7 +191,7 @@ def test_has_access_multiple_users(db):
 
     result = has_access_to_tool(
         db,
-        "another_users_key",
+        "another_users_key_id",
         tool.id
     )
 
@@ -237,8 +240,11 @@ def test_has_access_multiple_keys(db):
     db.add_all([key1, key2])
     db.commit()
 
-    assert has_access_to_tool(db, "key_tool_1", tool1.id) is True
+    db.refresh(key1)
+    db.refresh(key2)
 
-    assert has_access_to_tool(db, "key_tool_1", tool2.id) is False
+    assert has_access_to_tool(db, key1.id, tool1.id) is True
 
-    assert has_access_to_tool(db, "key_tool_2", tool2.id) is True
+    assert has_access_to_tool(db, key1.id, tool2.id) is False
+
+    assert has_access_to_tool(db, key2.id, tool2.id) is True
