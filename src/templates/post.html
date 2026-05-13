@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
-{% set fname = 'assets/img/default-hero-image' %}
+{% set fname = "assets/img/default-hero-image" %}
 {% if post %}
     {%if post.img_file != ''%} <!--handel image file name is not given-->
-        {% set fname_full = 'assets/img/'+ post.img_file %} <!---created a jinger variable to be able to change the bg image-->
+        {% set fname_full = "assets/img/"+ post.img_file %} <!---created a jinger variable to be able to change the bg image-->
         {% set fname_parts = post.img_file.rsplit('.', 1) %}
-        {% set fname = 'assets/img/' + fname_parts[0] %}
+        {% set fname = "assets/img/" + fname_parts[0] %}
     {%else%}
-        {% set fname =  'assets/img/default-hero-image' %}
+        {% set fname_full =  "assets/img/default-hero-image.jpg" %}
     {% endif %}
 
 
@@ -15,11 +15,11 @@
 
     {% block og_title %}{{ post.title }}{% endblock %}
     {% block og_description %}{{ post.description }}{% endblock %}
-    {% block og_image %}{{ url_for('static',path=fname)}}{% endblock %}
+    {% block og_image %}{{ url_for('static',path=fname_full)}}{% endblock %}
 
     {% block twitter_title %}{{ post.title }}{% endblock %}
     {% block twitter_description %}{{ post.description }}{% endblock %}
-    {% block twitter_image %}{{ url_for('static',path=fname)}}{% endblock %}
+    {% block twitter_image %}{{ url_for('static',path=fname_full)}}{% endblock %}
 
     {% block page_style %}{{url_for('static', path='css/post.css')}}{% endblock page_style %}
 

@@ -2,6 +2,7 @@
 
 
 {% set fname = "assets/img/tools-hero-img" %}
+{% set fname_full = "assets/img/tools-hero-img.png" %}
 {% set ftitle = "Tools Library | All Free Online Tools in One Place" %}
 {% set fdescription = "Explore all free online tools in one place — text tools, JSON tools, converters, counters, generators, and utilities. Fast, lightweight, and built for everyday productivity." %}
 {% set ftagline = "Your complete toolkit — simple, fast, and all in one place." %}
@@ -18,11 +19,11 @@
 
 {% block og_title %}{{ftitle}}{% endblock %}
 {% block og_description %}{{ fdescription }}{% endblock %}
-{% block og_image %}{{ url_for('static',path=fname)}}{% endblock %}
+{% block og_image %}{{ url_for('static',path=fname_full)}}{% endblock %}
 
 {% block twitter_title %}{{ ftitle }}{% endblock %}
 {% block twitter_description %}{{ fdescription }}{% endblock %}
-{% block twitter_image %}{{ url_for('static',path=fname)}}{% endblock %}
+{% block twitter_image %}{{ url_for('static',path=fname_full)}}{% endblock %}
 
 {% block page_style %}
 {{url_for('static', path='css/tools.css')}}
