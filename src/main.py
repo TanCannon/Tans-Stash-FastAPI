@@ -1,8 +1,10 @@
 import os
 from dotenv import load_dotenv
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from contextlib import asynccontextmanager
+
+from fastapi.security import APIKeyHeader
 from .database import engine, Base
 
 from .routers import register_api_routers
@@ -25,6 +27,8 @@ from fastapi.middleware.gzip import GZipMiddleware
 #enable CORS
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.middleware.api_gateway_middleware import APIGatewayMiddleware
+
 @asynccontextmanager
 async def lifespan(app):
     try:
@@ -44,6 +48,10 @@ app.add_middleware(
     GZipMiddleware,
     minimum_size=500
 )
+
+
+app.add_middleware(APIGatewayMiddleware)
+
 # Read allowed origins from env, fallback to common dev hosts
 allowed_origins = os.getenv(
     "CORS_ORIGINS",
@@ -72,6 +80,22 @@ app.mount("/static", StaticFiles(directory="src/static"), name="static")
 
 #registering routers
 register_api_routers(app)
+
+
+api_key_header = APIKeyHeader(name="x-api-key", auto_error=False)
+#example: ts_live_QaRsPqugcvpsDM-shnNpgPY6Ts1_gpFu8KcK2w7lBIM
+@app.get("/private/my-api")
+def my_api(
+    request: Request,
+    api_key: str = Depends(api_key_header)  # 👈 just for Swagger
+):
+    user_id = request.state.user_id
+
+    return {
+        "message": "Hello u have reached the analytics service",
+        "desc": "Provides usage analytics and metrics",
+        "user_id": user_id
+    }
 
 #register page routers
 register_page_routers(app)
