@@ -11,7 +11,7 @@ from src.database import SessionLocal
 
 from src.models.tool_model import Endpoint
 
-from src.services.api_key_service import validate_api_key, has_access_to_tool
+from src.services.api_key_service import validate_api_key, has_access_to_tool, check_rate_limit
 from src.utils.route_protection import is_protected_route
 
 
@@ -105,7 +105,6 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
                 )
 
             # 4. Rate limit validation
-            '''
             is_allowed = check_rate_limit(
                 db=db,
                 key_id=key_data["api_key_id"]
@@ -116,7 +115,6 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
                     status_code=429,
                     detail="Rate limit exceeded"
                 )
-            '''
 
             # 5. Endpoint → Tool mapping
             tool_id = self._get_tool_id(
