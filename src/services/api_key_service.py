@@ -2,10 +2,12 @@ import secrets
 import hashlib
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone
-
+from redis.exceptions import ConnectionError
+    
 from src.models.user_model import User, APIKey, Subscription, PlanProduct, Plan
 from src.models.tool_model import Tool
 from src.database import redis_client
+from src.exceptions import RedisUnavailableException
 
 API_KEY_PREFIX = "ts_live_"
 RATE_LIMIT_WINDOW = 60  # seconds
@@ -165,27 +167,109 @@ def check_rate_limit(db, key_id: str) -> bool:
     # --------------------------------------------------
 
     redis_key = f"rate_limit:{key_id}"
+    try:
+        current_count = redis_client.get(redis_key)
 
-    current_count = redis_client.get(redis_key)
+        # First request in the window
+        if current_count is None:
 
-    # First request in the window
-    if current_count is None:
+            redis_client.set(
+                redis_key,
+                1,
+                ex=RATE_LIMIT_WINDOW,
+            )
 
-        redis_client.set(
-            redis_key,
-            1,
-            ex=RATE_LIMIT_WINDOW,
-        )
+            return True
 
-        return True
+        current_count = int(current_count)
 
-    current_count = int(current_count)
+        # Rate limit exceeded
+        if current_count >= rate_limit:
+            return False
 
-    # Rate limit exceeded
-    if current_count >= rate_limit:
-        return False
+        # Increment request count
+        redis_client.incr(redis_key)
 
-    # Increment request count
-    redis_client.incr(redis_key)
+    except ConnectionError as e:
+            raise RedisUnavailableException() from e
 
     return True
+
+def check_request_limit(db, key_id: str) -> bool:
+    """
+    Checks whether the API key exceeded its monthly plan request limit.
+
+    Returns:
+        True  -> Request allowed
+        False -> Request limit exceeded / invalid access
+    """
+
+    if not key_id:
+        return False
+
+    # --------------------------------------------------
+    # Fetch plan request limit for the API key + tool access
+    # --------------------------------------------------
+
+    request_limit = (
+        db.query(Plan.request_limit)
+        .join(
+            Subscription,
+            Subscription.plan_id == Plan.id,
+        )
+        .join(
+            PlanProduct,
+            PlanProduct.plan_id == Plan.id,
+        )
+        .join(
+            APIKey,
+            APIKey.tool_id == PlanProduct.tool_id,
+        )
+        .filter(
+            APIKey.id == key_id,
+            APIKey.user_id == Subscription.user_id,
+            APIKey.is_active.is_(True),
+            Subscription.status == "active",
+        )
+        .scalar()
+    )
+
+    # No valid subscription / tool access / api key
+    if request_limit is None:
+        return False
+
+    # Unlimited plan
+    if request_limit <= 0:
+        return True
+
+    # --------------------------------------------------
+    # Monthly Redis Usage Tracking
+    # --------------------------------------------------
+    try:
+        now = datetime.now(timezone.utc)
+
+        current_month = now.strftime("%Y-%m")
+    
+        redis_key = f"request_limit:{key_id}:{current_month}"
+
+        # Atomic increment
+        current_count = redis_client.incr(redis_key)
+
+        # First request of the month
+        if current_count == 1:
+
+            # Keep slightly longer than a month
+            redis_client.expire(
+                redis_key,
+                35 * 24 * 60 * 60,
+            )
+
+        # Limit exceeded
+        if current_count > request_limit:
+            return False
+
+    except ConnectionError as e:
+        raise RedisUnavailableException() from e
+
+    return True
+

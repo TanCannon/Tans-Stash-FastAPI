@@ -4,6 +4,7 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 
 from sqlalchemy.exc import SQLAlchemyError
+from src.exceptions import RedisUnavailableException
 
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -11,7 +12,7 @@ from src.database import SessionLocal
 
 from src.models.tool_model import Endpoint
 
-from src.services.api_key_service import validate_api_key, has_access_to_tool, check_rate_limit
+from src.services.api_key_service import validate_api_key, has_access_to_tool, check_rate_limit, check_request_limit
 from src.utils.route_protection import is_protected_route
 
 
@@ -147,7 +148,13 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
                 )
 
             # 7. Plan limit validation
-            # TODO
+            can_request = check_request_limit(db=db, key_id=key_data["api_key_id"])
+            
+            if not can_request:
+                 return self._error_response(
+                    status_code=429,
+                    detail="Monthly request limit exceeded"
+                )
 
             # 8. Attach request identity
             request.state.user_id = key_data["user_id"]
@@ -155,7 +162,27 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
 
             return await call_next(request)
 
+        # ==============================================
+        # Redis Errors
+        # ==============================================
+
+        except RedisUnavailableException:
+
+            logger.exception(
+                "Redis service unavailable in API gateway middleware"
+            )
+
+            return self._error_response(
+                status_code=503,
+                detail="Service temporarily unavailable"
+            )
+
+        # ==============================================
+        # Database Errors
+        # ==============================================
+
         except SQLAlchemyError:
+
             logger.exception(
                 "Database error in API gateway middleware"
             )
@@ -165,7 +192,12 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
                 detail="Database error"
             )
 
+        # ==============================================
+        # Unexpected Errors
+        # ==============================================
+
         except Exception:
+
             logger.exception(
                 "Unexpected middleware error"
             )
@@ -173,7 +205,7 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
             return self._error_response(
                 status_code=500,
                 detail="Internal server error"
-            )
+            )  
 
         finally:
             db.close()
