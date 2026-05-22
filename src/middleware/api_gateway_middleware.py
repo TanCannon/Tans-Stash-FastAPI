@@ -23,11 +23,17 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
     def _validate_api_key(self, db, api_key: str):
         return validate_api_key(
             db=db,
-            api_key=api_key
+            incoming_key=api_key
         )
 
     def _check_rate_limit(self, db, key_id: str):
         return check_rate_limit(
+            db=db,
+            key_id=key_id
+        )
+
+    def _check_request_limit(self, db, key_id: str):
+        return check_request_limit(
             db=db,
             key_id=key_id
         )
@@ -97,7 +103,7 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
         try:
 
             # 3. Validate API key
-            key_data = validate_api_key(db, api_key)
+            key_data = self._validate_api_key(db, api_key)
 
             if not key_data:
                 return self._error_response(
@@ -106,7 +112,7 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
                 )
 
             # 4. Rate limit validation
-            is_allowed = check_rate_limit(
+            is_allowed = self._check_rate_limit(
                 db=db,
                 key_id=key_data["api_key_id"]
             )
@@ -135,7 +141,7 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
                 )
 
             # 6. Tool access validation
-            has_access = has_access_to_tool(
+            has_access = self._has_tool_access(
                 db=db,
                 key_id=key_data["api_key_id"],
                 tool_id=tool_id
@@ -148,7 +154,7 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
                 )
 
             # 7. Plan limit validation
-            can_request = check_request_limit(db=db, key_id=key_data["api_key_id"])
+            can_request = self._check_request_limit(db=db, key_id=key_data["api_key_id"])
             
             if not can_request:
                  return self._error_response(
@@ -157,8 +163,9 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
                 )
 
             # 8. Attach request identity
-            request.state.user_id = key_data["user_id"]
-            request.state.api_key_id = key_data["api_key_id"]
+            self._attach_request_identity(request, key_data)
+#            request.state.user_id = key_data["user_id"]
+           # request.state.api_key_id = key_data["api_key_id"]
 
             return await call_next(request)
 
@@ -210,17 +217,3 @@ class APIGatewayMiddleware(BaseHTTPMiddleware):
         finally:
             db.close()
 
-    @staticmethod
-    def _get_tool_id(db, request_path: str):
-
-        return db.query(Endpoint.tool_id).filter(
-            Endpoint.path == request_path
-        ).scalar()
-
-    @staticmethod
-    def _error_response(status_code: int, detail: str):
-
-        return JSONResponse(
-            status_code=status_code,
-            content={"detail": detail}
-        )

@@ -1,16 +1,15 @@
-from unittest.mock import patch
-
-# from src.main import app
+from unittest.mock import patch, ANY
 
 from fastapi import FastAPI, Request
 from fastapi.testclient import TestClient
 
 from sqlalchemy.exc import SQLAlchemyError
 
+from src.exceptions import RedisUnavailableException
+
 from src.middleware.api_gateway_middleware import (
     APIGatewayMiddleware
 )
-
 
 # -----------------------------------
 # Test App Setup
@@ -44,15 +43,17 @@ client = TestClient(app)
 # Public Route Tests
 # -----------------------------------
 
-@patch(
-    "src.middleware.api_gateway_middleware.is_protected_route",
-    return_value=False
-)
-def test_public_route_skips_middleware(mock_protected):
+def test_public_route_skips_middleware():
 
-    response = client.get("/public")
+    with patch(
+        "src.middleware.api_gateway_middleware.is_protected_route",
+        return_value=False
+    ):
+
+        response = client.get("/public")
 
     assert response.status_code == 200
+
     assert response.json() == {
         "message": "public"
     }
@@ -62,216 +63,271 @@ def test_public_route_skips_middleware(mock_protected):
 # API Key Tests
 # -----------------------------------
 
-@patch(
-    "src.middleware.api_gateway_middleware.is_protected_route",
-    return_value=True
-)
-def test_missing_api_key(mock_protected):
+def test_missing_api_key():
 
-    response = client.get("/protected")
+    with patch(
+        "src.middleware.api_gateway_middleware.is_protected_route",
+        return_value=True
+    ):
+
+        response = client.get("/protected")
 
     assert response.status_code == 401
+
     assert response.json() == {
         "detail": "API key missing"
     }
 
 
-@patch(
-    "src.middleware.api_gateway_middleware.is_protected_route",
-    return_value=True
-)
-@patch(
-    "src.middleware.api_gateway_middleware.validate_api_key",
-    return_value=None
-)
-def test_invalid_api_key(
-    mock_validate,
-    mock_protected
-):
+def test_invalid_api_key():
 
-    response = client.get(
-        "/protected",
-        headers={"x-api-key": "invalid"}
-    )
+    with patch(
+        "src.middleware.api_gateway_middleware.is_protected_route",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_validate_api_key",
+        return_value=None
+    ) as mock_validate:
+
+        response = client.get(
+            "/protected",
+            headers={"x-api-key": "invalid"}
+        )
 
     assert response.status_code == 403
+
     assert response.json() == {
         "detail": "Invalid API key"
     }
+
+    mock_validate.assert_called_once()
 
 
 # -----------------------------------
 # Rate Limit Tests
 # -----------------------------------
-'''
-@patch(
-    "src.middleware.api_gateway_middleware.is_protected_route",
-    return_value=True
-)
-@patch(
-    "src.middleware.api_gateway_middleware.validate_api_key"
-)
-@patch(
-    "src.middleware.api_gateway_middleware.check_rate_limit",
-    return_value=False
-)
-def test_rate_limit_exceeded(
-    mock_rate_limit,
-    mock_validate,
-    mock_protected
-):
 
-    mock_validate.return_value = {
-        "user_id": "user123",
-        "api_key_id": "key123"
-    }
+def test_rate_limit_exceeded():
 
-    response = client.get(
-        "/protected",
-        headers={"x-api-key": "valid"}
-    )
+    with patch(
+        "src.middleware.api_gateway_middleware.is_protected_route",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_validate_api_key"
+    ) as mock_validate, patch.object(
+        APIGatewayMiddleware,
+        "_check_rate_limit",
+        return_value=False
+    ) as mock_rate_limit:
+
+        mock_validate.return_value = {
+            "user_id": "user123",
+            "api_key_id": "key123"
+        }
+
+        response = client.get(
+            "/protected",
+            headers={"x-api-key": "valid"}
+        )
 
     assert response.status_code == 429
+
     assert response.json() == {
         "detail": "Rate limit exceeded"
     }
 
-'''
+    mock_rate_limit.assert_called_once_with(
+        db=ANY,
+        key_id="key123"
+    )
+
+
 # -----------------------------------
 # Endpoint Mapping Tests
 # -----------------------------------
 
-@patch(
-    "src.middleware.api_gateway_middleware.is_protected_route",
-    return_value=True
-)
-@patch(
-    "src.middleware.api_gateway_middleware.validate_api_key"
-)
+def test_endpoint_not_mapped():
 
-#@patch(
-#    "src.middleware.api_gateway_middleware.check_rate_limit",
-#    return_value=True
-#)
+    with patch(
+        "src.middleware.api_gateway_middleware.is_protected_route",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_validate_api_key"
+    ) as mock_validate, patch.object(
+        APIGatewayMiddleware,
+        "_check_rate_limit",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_get_tool_id",
+        return_value=None
+    ) as mock_tool:
 
-@patch.object(
-    APIGatewayMiddleware,
-    "_get_tool_id",
-    return_value=None
-)
-def test_endpoint_not_mapped(
-    mock_tool,
-    # mock_rate_limit,
-    mock_validate,
-    mock_protected
-):
+        mock_validate.return_value = {
+            "user_id": "user123",
+            "api_key_id": "key123"
+        }
 
-    mock_validate.return_value = {
-        "user_id": "user123",
-        "api_key_id": "key123"
-    }
-
-    response = client.get(
-        "/protected",
-        headers={"x-api-key": "valid"}
-    )
+        response = client.get(
+            "/protected",
+            headers={"x-api-key": "valid"}
+        )
 
     assert response.status_code == 404
+
     assert response.json() == {
         "detail": "Endpoint not mapped to any tool"
     }
+
+    mock_tool.assert_called_once_with(
+        db=ANY,
+        request_path="/protected"
+    )
 
 
 # -----------------------------------
 # Access Validation Tests
 # -----------------------------------
 
-@patch(
-    "src.middleware.api_gateway_middleware.is_protected_route",
-    return_value=True
-)
-@patch(
-    "src.middleware.api_gateway_middleware.validate_api_key"
-)
-#@patch(
- #   "src.middleware.api_gateway_middleware.check_rate_limit",
-  #  return_value=True
-#)
-@patch.object(
-    APIGatewayMiddleware,
-    "_get_tool_id",
-    return_value="tool123"
-)
-@patch(
-    "src.middleware.api_gateway_middleware.has_access_to_tool",
-    return_value=False
-)
-def test_access_denied(
-    mock_access,
-    mock_tool,
-    # mock_rate_limit,
-    mock_validate,
-    mock_protected
-):
+def test_access_denied():
 
-    mock_validate.return_value = {
-        "user_id": "user123",
-        "api_key_id": "key123"
-    }
+    with patch(
+        "src.middleware.api_gateway_middleware.is_protected_route",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_validate_api_key"
+    ) as mock_validate, patch.object(
+        APIGatewayMiddleware,
+        "_check_rate_limit",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_get_tool_id",
+        return_value="tool123"
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_has_tool_access",
+        return_value=False
+    ) as mock_access:
 
-    response = client.get(
-        "/protected",
-        headers={"x-api-key": "valid"}
-    )
+        mock_validate.return_value = {
+            "user_id": "user123",
+            "api_key_id": "key123"
+        }
+
+        response = client.get(
+            "/protected",
+            headers={"x-api-key": "valid"}
+        )
 
     assert response.status_code == 403
+
     assert response.json() == {
         "detail": "Access denied for this API"
     }
+
+    mock_access.assert_called_once_with(
+        db=ANY,
+        key_id="key123",
+        tool_id="tool123"
+    )
+
+
+# -----------------------------------
+# Request Limit Tests
+# -----------------------------------
+
+def test_request_limit_exceeded():
+
+    with patch(
+        "src.middleware.api_gateway_middleware.is_protected_route",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_validate_api_key"
+    ) as mock_validate, patch.object(
+        APIGatewayMiddleware,
+        "_check_rate_limit",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_get_tool_id",
+        return_value="tool123"
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_has_tool_access",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_check_request_limit",
+        return_value=False
+    ) as mock_request_limit:
+
+        mock_validate.return_value = {
+            "user_id": "user123",
+            "api_key_id": "key123"
+        }
+
+        response = client.get(
+            "/protected",
+            headers={"x-api-key": "valid"}
+        )
+
+    assert response.status_code == 429
+
+    assert response.json() == {
+        "detail": "Monthly request limit exceeded"
+    }
+
+    mock_request_limit.assert_called_once_with(
+        db=ANY,
+        key_id="key123"
+    )
 
 
 # -----------------------------------
 # Success Flow Test
 # -----------------------------------
 
-@patch(
-    "src.middleware.api_gateway_middleware.is_protected_route",
-    return_value=True
-)
-@patch(
-    "src.middleware.api_gateway_middleware.validate_api_key"
-)
+def test_successful_request():
 
-#@patch(
- #   "src.middleware.api_gateway_middleware.check_rate_limit",
-  #  return_value=True
-#)
-@patch.object(
-    APIGatewayMiddleware,
-    "_get_tool_id",
-    return_value="tool123"
-)
-@patch(
-    "src.middleware.api_gateway_middleware.has_access_to_tool",
-    return_value=True
-)
-def test_successful_request(
-    mock_access,
-    mock_tool,
-    # mock_rate_limit,
-    mock_validate,
-    mock_protected
-):
+    with patch(
+        "src.middleware.api_gateway_middleware.is_protected_route",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_validate_api_key"
+    ) as mock_validate, patch.object(
+        APIGatewayMiddleware,
+        "_check_rate_limit",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_get_tool_id",
+        return_value="tool123"
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_has_tool_access",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_check_request_limit",
+        return_value=True
+    ):
 
-    mock_validate.return_value = {
-        "user_id": "user123",
-        "api_key_id": "key123"
-    }
+        mock_validate.return_value = {
+            "user_id": "user123",
+            "api_key_id": "key123"
+        }
 
-    response = client.get(
-        "/protected",
-        headers={"x-api-key": "valid"}
-    )
+        response = client.get(
+            "/protected",
+            headers={"x-api-key": "valid"}
+        )
 
     assert response.status_code == 200
 
@@ -283,26 +339,59 @@ def test_successful_request(
 
 
 # -----------------------------------
+# Redis Exception Tests
+# -----------------------------------
+
+def test_redis_error():
+
+    with patch(
+        "src.middleware.api_gateway_middleware.is_protected_route",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_validate_api_key"
+    ) as mock_validate, patch.object(
+        APIGatewayMiddleware,
+        "_check_rate_limit",
+        side_effect=RedisUnavailableException()
+    ):
+
+        mock_validate.return_value = {
+            "user_id": "user123",
+            "api_key_id": "key123"
+        }
+
+        response = client.get(
+            "/protected",
+            headers={"x-api-key": "valid"}
+        )
+
+    assert response.status_code == 503
+
+    assert response.json() == {
+        "detail": "Service temporarily unavailable"
+    }
+
+
+# -----------------------------------
 # Database Exception Tests
 # -----------------------------------
 
-@patch(
-    "src.middleware.api_gateway_middleware.is_protected_route",
-    return_value=True
-)
-@patch(
-    "src.middleware.api_gateway_middleware.validate_api_key",
-    side_effect=SQLAlchemyError()
-)
-def test_database_error(
-    mock_validate,
-    mock_protected
-):
+def test_database_error():
 
-    response = client.get(
-        "/protected",
-        headers={"x-api-key": "valid"}
-    )
+    with patch(
+        "src.middleware.api_gateway_middleware.is_protected_route",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_validate_api_key",
+        side_effect=SQLAlchemyError()
+    ):
+
+        response = client.get(
+            "/protected",
+            headers={"x-api-key": "valid"}
+        )
 
     assert response.status_code == 500
 
@@ -315,27 +404,25 @@ def test_database_error(
 # Unexpected Exception Tests
 # -----------------------------------
 
-@patch(
-    "src.middleware.api_gateway_middleware.is_protected_route",
-    return_value=True
-)
-@patch(
-    "src.middleware.api_gateway_middleware.validate_api_key",
-    side_effect=Exception()
-)
-def test_internal_server_error(
-    mock_validate,
-    mock_protected
-):
+def test_internal_server_error():
 
-    response = client.get(
-        "/protected",
-        headers={"x-api-key": "valid"}
-    )
+    with patch(
+        "src.middleware.api_gateway_middleware.is_protected_route",
+        return_value=True
+    ), patch.object(
+        APIGatewayMiddleware,
+        "_validate_api_key",
+        side_effect=Exception()
+    ):
+
+        response = client.get(
+            "/protected",
+            headers={"x-api-key": "valid"}
+        )
 
     assert response.status_code == 500
 
     assert response.json() == {
         "detail": "Internal server error"
     }
-  
+
