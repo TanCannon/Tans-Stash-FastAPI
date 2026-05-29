@@ -29,6 +29,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.middleware.api_gateway_middleware import APIGatewayMiddleware
 
+#import my custom exception classed and handlers
+from src.exceptions import AppException
+from src.handlers import app_exception_handler
+
 @asynccontextmanager
 async def lifespan(app):
     try:
@@ -99,6 +103,12 @@ def my_api(
 
 #register page routers
 register_page_routers(app)
+
+#register my custom exception handler in handlers.py
+app.add_exception_handler(
+    AppException,
+    app_exception_handler
+)
 
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc: StarletteHTTPException):

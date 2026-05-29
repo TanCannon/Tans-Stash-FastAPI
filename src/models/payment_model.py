@@ -30,6 +30,12 @@ class Payment(Base):
         index=True
     )
 
+    plan_id = Column(
+        String, 
+        ForeignKey("plans.id"), 
+        nullable=False
+    )
+
     amount = Column(
         Integer,
         nullable=False
