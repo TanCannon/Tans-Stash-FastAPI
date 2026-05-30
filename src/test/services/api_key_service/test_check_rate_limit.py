@@ -1,4 +1,6 @@
 from unittest.mock import patch
+from datetime import datetime, timezone, timedelta
+
 from src.models.user_model import User, Plan, Subscription, PlanProduct, APIKey
 from src.models.tool_model import Tool
 
@@ -6,6 +8,8 @@ from src.services.api_key_service import (
     check_rate_limit
 )
 
+now = datetime.now()
+PLAN_DURATION_IN_DAYS = 30
 
 # ---------------------------------------------------------
 # 1. Empty Key ID
@@ -75,7 +79,10 @@ def test_check_rate_limit_first_request(
         id="sub_1",
         user_id=user.id,
         plan_id=plan.id,
-        status="active"
+        status="active",
+        start_date=now,
+        end_date=now + timedelta(days=PLAN_DURATION_IN_DAYS)
+
     )
 
     db.add(subscription)
@@ -163,7 +170,10 @@ def test_check_rate_limit_within_limit(
         id="sub_1",
         user_id=user.id,
         plan_id=plan.id,
-        status="active"
+        status="active",
+        start_date=now,
+        end_date=now + timedelta(days=PLAN_DURATION_IN_DAYS)
+
     )
 
     db.add(subscription)
@@ -240,7 +250,9 @@ def test_check_rate_limit_exceeded(
         id="sub_1",
         user_id=user.id,
         plan_id=plan.id,
-        status="active"
+        status="active",
+        start_date=now,
+        end_date=now + timedelta(days=PLAN_DURATION_IN_DAYS)
     )
 
     db.add(subscription)
