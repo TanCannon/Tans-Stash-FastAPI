@@ -1,7 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import (
     Column,
     Integer,
+    Numeric,
     String,
     DateTime,
     ForeignKey,
@@ -36,8 +37,7 @@ class Payment(Base):
         nullable=False
     )
 
-    amount = Column(
-        Integer,
+    amount = Column(Numeric(precision=10, scale=2),
         nullable=False
     )
 
@@ -84,16 +84,14 @@ class Payment(Base):
     )
 
     created_at = Column(
-        DateTime,
-        default=datetime.utcnow,
-        nullable=False
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc)    
     )
 
     updated_at = Column(
-        DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
-        nullable=False
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc)    
     )
 
     paid_at = Column(

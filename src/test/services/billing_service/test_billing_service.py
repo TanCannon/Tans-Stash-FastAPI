@@ -4,12 +4,11 @@ from unittest.mock import patch
 from datetime import datetime, timezone, timedelta
 
 from src.services.billing_service import (
-    create_payment_record,
+    _create_payment_record,
     _mark_payment_success,
     _create_subscription,
     verify_payment_service,
-    PLAN_DURATION_IN_DAYS,
-    now
+    PLAN_DURATION_IN_DAYS
 )
 
 from src.models import (
@@ -31,13 +30,14 @@ from src.exceptions import (
     DuplicatePaymentError
 )
 
+now = datetime.now(timezone.utc)
 
 # ==================================================
 # _create_payment_record
 # ==================================================
 
 def test_create_payment_record_success(db):
-    payment = create_payment_record(
+    payment = _create_payment_record(
         db=db,
         user_id="user_1",
         plan_id="plan_1",
