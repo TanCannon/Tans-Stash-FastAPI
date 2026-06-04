@@ -18,7 +18,7 @@ now = datetime.now()
 
 payment_gateway = MockPaymentGateway()
 
-def create_payment_record(
+def _create_payment_record(
     db: Session,
     user_id: str,
     plan_id: str,
