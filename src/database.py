@@ -1,16 +1,28 @@
 '''------------- SQLITE connectivity ---------------- '''
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine, event
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 from src.core.settings import settings
 
-#path and name of the location when you need database
-SQLACHEMY_DATABASE_URL = settings.DATABASE_URL
+SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 
-engine = create_engine(SQLACHEMY_DATABASE_URL, connect_args={'check_same_thread': False})
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={"check_same_thread": False}
+)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Enable Foreign Key support in SQLite (VERY IMPORTANT)
+@event.listens_for(engine, "connect")
+def enable_sqlite_foreign_keys(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
+
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
 
 Base = declarative_base()
 
@@ -32,3 +44,14 @@ Base = declarative_base()
 # )
 
 # Base = declarative_base()
+
+
+''' ----------------- Redis connectivity --------------------- '''
+from redis import Redis
+
+redis_client = Redis(
+    host="localhost",
+    port=6379,
+    db=0,
+    decode_responses=True
+)
