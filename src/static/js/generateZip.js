@@ -105,6 +105,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
     });
   }
+
+
+  // --------------- main cdoe ----------------------//
+
   unicodeBox.on("change", (cm, changeObj) => {
     // console.log("asciiBox:", asciiBox);
     onUnicodeChange(cm, asciiBox, changeObj);
@@ -114,7 +118,38 @@ window.addEventListener("DOMContentLoaded", () => {
     handleAscii(cm, changeObj);
   });
 
-  // asciiBox.on("change", handleAscii);
+  //auto indentation feature
+  asciiBox.addKeyMap({
+    Enter: function(cm) {
+      const cursor = cm.getCursor();
+      const line = cm.getLine(cursor.line);
+
+      let insertText = "\n";
+
+      // Everything before the last |-- or `--
+      const match = line.match(/^(.*?)(\|--|`--)/);
+
+      if (line.trim().endsWith("/")) {
+   
+        if (match) {
+          insertText += match[1] + "|  |-- ";
+        } else {
+          // Root folder
+          insertText += "|-- ";
+        }
+      }
+      else{
+        insertText += match[1] + "|-- ";
+      }
+
+     // console.log(JSON.stringify(insertText));
+
+      cm.replaceRange(insertText, cursor);
+     // cm.replaceSelection(insertText, "end");
+
+      return true;
+    }
+  });  // asciiBox.on("change", handleAscii);
 
   // Highlight on focus
   unicodeBox.on("focus", () => {
