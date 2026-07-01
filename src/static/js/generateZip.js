@@ -105,6 +105,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
     });
   }
+
+
+  // --------------- main cdoe ----------------------//
+
   unicodeBox.on("change", (cm, changeObj) => {
     // console.log("asciiBox:", asciiBox);
     onUnicodeChange(cm, asciiBox, changeObj);
