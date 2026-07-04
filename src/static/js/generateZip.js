@@ -128,18 +128,36 @@ window.addEventListener("DOMContentLoaded", () => {
 
       // Everything before the last |-- or `--
       const match = line.match(/^(.*?)(\|--|`--)/);
-
+      
+      //if current line is folder
       if (line.trim().endsWith("/")) {
    
         if (match) {
+          // increase indent by 1 if not root folder
           insertText += match[1] + "|  |-- ";
-        } else {
-          // Root folder
+        }
+        else {
+          // maintain indent if root folder
           insertText += "|-- ";
         }
       }
+      //if not then check for a last file or not
       else{
-        insertText += match[1] + "|-- ";
+        //if last file then decrease indent by 1. i.e decrease the no of | by one and concat.
+        if (match[2]=="`--") {
+          if (match[1] != ''){
+            const indentLevel = (match[1].match(/\|  /g) || []).length;
+            insertText += ("|  ".repeat(indentLevel-1)) + "|-- ";
+          }
+          //else its the indent level 1 so skip adding anything
+          else{
+            insertText += match[1];
+          }
+        }
+        //else maintain the current indent
+        else{
+          insertText += match[1] + "|-- ";
+        }
       }
 
      // console.log(JSON.stringify(insertText));
