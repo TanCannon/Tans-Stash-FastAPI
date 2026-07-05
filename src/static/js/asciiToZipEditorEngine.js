@@ -236,13 +236,13 @@ function parseAsciiTree(text) {
 
     lines.forEach((line, index) => {
         const lineNumber = index + 1;
-        //console.log(`Line: ${line}, LineNo: ${lineNumber}`);
+        console.log(`Line: ${line}, LineNo: ${lineNumber}`);
 
         let token;
         try {
             //token = {indent, branch, name, isFolder, line}
             token = tokenizeLine(line, lineNumber);
-            //console.log(`Token: Indent- ${token.indent}, Branch- ${token.branch}, Name- ${token.name}, isFolder- ${token.isFolder}, LineNo- ${token.lineNumber}`);
+            console.log(`Token: Indent- ${token.indent}, Branch- ${token.branch}, Name- ${token.name}, isFolder- ${token.isFolder}, LineNo- ${token.lineNumber}`);
         } catch (e) {
             // addError(e.line, e.message);
             addError(e.line, e.message);
@@ -268,7 +268,7 @@ function parseAsciiTree(text) {
                     addError(token.line, `Invalid tree syntax, this branch is ended above by └─ please remove └─ to add more on this branch`);
                     return;
                 }
-                //console.log("Branch error");
+                console.log("Branch error");
             }
         }
         else{
@@ -283,7 +283,7 @@ function parseAsciiTree(text) {
     });
 
     errors.forEach(err => {
-        //console.log(`errors: ${err.line, err.message}`);
+        console.log(`errors: ${err.line, err.message}`);
     })
     
     return errors;
@@ -294,7 +294,7 @@ export function validateUnicodeTree(cm) {
     const text = cm.getValue();
     const lines = text.split("\n");
 
-    //console.log("runi");
+    console.log("runi");
     const errors = parseAsciiTree(text);
 
     return errors;
