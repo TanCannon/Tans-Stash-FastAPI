@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from datetime import datetime, timezone
 
 from fastapi import FastAPI, Request
 from .database import engine, Base
@@ -34,6 +35,15 @@ app.add_middleware(
     secret_key=os.getenv("SECRET_KEY")
 )
 
+
+# endpoint to get the api health
+@app.get("/health")
+async def health():
+    return {
+        "status": "healthy",
+        "service": "FastAPI",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
 
 @app.on_event("startup")
 async def startup():
