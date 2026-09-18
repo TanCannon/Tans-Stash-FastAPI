@@ -18,3 +18,13 @@ class ToolUsage(Base):
 
     def __repr__(self):
         return f"<ToolUsage page={self.page_name} ip={self.user_ip}>"
+    
+class UsageLog(Base):
+    __tablename__ = "usage_logs"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(String)
+    api_key_id = Column(String)
+    endpoint_id = Column(String)
+    status_code = Column(Integer)
+    response_time_ms = Column(Integer)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

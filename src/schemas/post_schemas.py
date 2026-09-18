@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from typing import Optional, List
 
@@ -27,8 +27,7 @@ class PostResponse(PostBase):
     date: datetime
     last_modified: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True  # Correct for Pydantic v2
+    model_config = ConfigDict(from_attributes=True)
 
 # for pagination of the posts
 class PaginatedPosts(BaseModel):

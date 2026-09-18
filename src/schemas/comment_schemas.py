@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from datetime import datetime
 from typing import Optional, List
 from enum import Enum
@@ -35,14 +35,12 @@ class CommentResponse(CommentBase):
     created_at: datetime
     status: CommentStatusEnum
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CommentWithReplies(CommentResponse):
     replies: List["CommentWithReplies"] = Field(default_factory=list)
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 CommentWithReplies.model_rebuild()
