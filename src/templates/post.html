@@ -148,31 +148,340 @@
             </div>
     </header>
         <!-- Post Content-->
-        <article class="mb-4">
-            <div class="container px-4 px-lg-5">
-                <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-                        {% if (post.last_modified is not none) %}
-                            <p class="meta">
-                                <blockquote>
-                                    <em><strong>Updated on:</strong>
-                                    {{post.last_modified | human_date }}</em>
-                            </blockquote>
-                            </p>
-                        {% endif %}
+ <article class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-11 col-lg-10 col-xl-9">
+                {% if (post.last_modified is not none) %}
+                    <p class="meta">
+                        <blockquote>
+                            <em><strong>Updated on:</strong>
+                            {{ post.last_modified | human_date }}</em>
+                        </blockquote>
+                    </p>
+                {% endif %}
+                
+                <div id="scrollControls">
+                    <!-- TOC toggle button -->
+                    <button class="toc-toggle-btn mb-3 active"
+                            type="button"
+                            id="tocToggleBtn"
+                            aria-expanded="true"
+                            aria-controls="tocCol">
+                        <i class="bi bi-list"></i>
+                        <span>Table of Contents</span>
+                    </button>
+
+                    <button id="scrollToggle">
+                        Lock In!
+                    </button>
+                </div>
+
+                <!-- Custom flex wrapper -->
+                <div class="toc-layout">
+                    <!-- TOC column -->
+                    <div class="toc-col" id="tocCol">
                         <aside class="toc">
                             <nav aria-label="Table of Contents">
                                 <h3>Table of Contents</h3>
                                 {{ render_toc(toc) }}
                             </nav>
                         </aside>
-                        {{content|safe}}
+                    </div>
+
+                    <!-- Content column -->
+                    <div class="content-col" id="contentCol">
+                        <div class="content-scroll">
+                        {{ content|safe }}
                         <div>
                             {# {% include "components/CommentSection.html" %} #}
+                        </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </article>
-        
+        </div>
+    </div>
+</article>
+
+<script>
+
+// ------------- toc collapsible toggle logic ------------- //
+document.addEventListener('DOMContentLoaded', function () {
+    var tocCol = document.getElementById('tocCol');
+    var toggleBtn = document.getElementById('tocToggleBtn');
+    var mobileQuery = window.matchMedia('(max-width: 767.98px)');
+
+    var isDesktopOpen = true;
+    var isMobileOpen = false;
+
+    function applyState() {
+        var isOpen = mobileQuery.matches ? isMobileOpen : isDesktopOpen;
+
+        tocCol.classList.toggle('toc-col--hidden', !isOpen);
+        toggleBtn.classList.toggle('active', isOpen);
+        toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    // Toggle button
+    toggleBtn.addEventListener('click', function (event) {
+        event.stopPropagation();
+
+        if (mobileQuery.matches) {
+            isMobileOpen = !isMobileOpen;
+        } else {
+            isDesktopOpen = !isDesktopOpen;
+        }
+
+        applyState();
+    });
+
+    // Click anywhere on mobile
+    document.addEventListener('click', function (event) {
+        if (!mobileQuery.matches) return;
+
+        // If TOC isn't open, nothing to do
+        if (!isMobileOpen) return;
+
+        // If clicking the toggle button, don't close here
+        if (toggleBtn.contains(event.target)) return;
+
+        // Close the TOC
+        isMobileOpen = false;
+        applyState();
+    });
+
+    // swipe toggle logic 
+    var touchStartX = 0;
+    var touchStartY = 0;
+    var swipeTracking = false;
+    var swipeTriggered = false;
+
+    var swipeThreshold = 40;
+    var edgeThreshold = 100;
+
+
+    // =========================
+    // TOUCH START
+    // =========================
+
+    document.addEventListener('touchstart', function (event) {
+
+        if (!mobileQuery.matches) return;
+
+        touchStartX = event.touches[0].clientX;
+        touchStartY = event.touches[0].clientY;
+
+        swipeTracking = false;
+        swipeTriggered = false;
+
+        // Start tracking only if:
+        // 1. TOC is closed and gesture starts near left edge
+        // 2. OR TOC is already open
+        if (
+            (!isMobileOpen && touchStartX <= edgeThreshold) ||
+            isMobileOpen
+        ) {
+            swipeTracking = true;
+        }
+
+    }, { passive: true });
+
+
+    // =========================
+    // TOUCH MOVE
+    // =========================
+
+    document.addEventListener('touchmove', function (event) {
+
+        if (!mobileQuery.matches) return;
+        if (!swipeTracking) return;
+        if (swipeTriggered) return;
+
+        var currentX = event.touches[0].clientX;
+        var currentY = event.touches[0].clientY;
+
+        var deltaX = currentX - touchStartX;
+        var deltaY = currentY - touchStartY;
+
+        // Ignore vertical movement
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+            return;
+        }
+
+        // =========================
+        // OPEN
+        // =========================
+
+        if (!isMobileOpen && deltaX >= swipeThreshold) {
+
+            isMobileOpen = true;
+
+            applyState();
+
+            swipeTriggered = true;
+        }
+
+
+        // =========================
+        // CLOSE
+        // =========================
+
+        else if (isMobileOpen && deltaX <= -swipeThreshold) {
+
+            isMobileOpen = false;
+
+            applyState();
+
+            swipeTriggered = true;
+        }
+
+    }, { passive: true });
+
+
+    // =========================
+    // TOUCH END
+    // =========================
+
+    document.addEventListener('touchend', function () {
+
+        swipeTracking = false;
+        swipeTriggered = false;
+
+    });
+
+    // Re-apply state when crossing breakpoint
+    mobileQuery.addEventListener('change', applyState);
+
+    applyState();
+});
+
+// -------------------------------------------- //
+
+
+// -------- scroll toggle logic ------------------ //
+
+const scrollToggle = document.getElementById("scrollToggle");
+
+const contentCol = document.getElementById("contentCol");
+
+const controls = document.getElementById("scrollControls");
+const topOffset = controls.offsetHeight;
+
+let isTransitioning = false;
+
+scrollToggle.addEventListener("click", () => {
+
+    // Prevent double-clicks while transitioning
+    if (isTransitioning) return;
+
+    // =========================
+    // LOCK
+    // =========================
+    if (!document.body.classList.contains("scroll-locked")) {
+
+        isTransitioning = true;
+
+        // Measure BEFORE starting the scroll
+        const rect = contentCol.getBoundingClientRect();
+
+        // Calculate the position that centers the content 
+        const targetScroll =
+            window.scrollY +
+            rect.top +
+            (rect.height / 2) -
+            (window.innerHeight / 2) -
+            (topOffset / 2);
+
+        // Clamp it to valid page scroll range
+        const maxScroll =
+            document.documentElement.scrollHeight -
+            window.innerHeight;
+
+        const finalScroll = Math.max(
+            0,
+            Math.min(targetScroll, maxScroll)
+        );
+
+        // Scroll the page
+        window.scrollTo({
+            top: finalScroll,
+            behavior: "smooth"
+        });
+
+        // Wait until the browser reaches the target
+        const checkScroll = () => {
+
+            const distance = Math.abs(
+                window.scrollY - finalScroll
+            );
+
+            if (distance <= 2) {
+
+                // IMPORTANT:
+                // Lock only after scrolling has finished
+                document.body.classList.add("scroll-locked");
+                // toggle button states
+                scrollToggle.classList.add('active');
+                scrollToggle.innerText = "Locked In!!"
+
+                isTransitioning = false;
+
+                return;
+            }
+
+            requestAnimationFrame(checkScroll);
+        };
+
+        requestAnimationFrame(checkScroll);
+
+    }
+
+    // =========================
+    // UNLOCK
+    // =========================
+    else {
+
+        document.body.classList.remove("scroll-locked");
+        scrollToggle.classList.remove('active');
+        scrollToggle.innerText = "Lock In!"
+
+
+    }
+});
+
+// ------------------------------ //
+
+
+//-------------------- "content only scroll on toc clicks" logic ------------------ //
+
+document.querySelectorAll('#tocCol a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const target = document.querySelector(this.getAttribute('href'));
+        const container = document.querySelector('.content-scroll');
+
+        if (!target || !container) return;
+
+        const navbar = document.querySelector('.navbar');
+        const offset = navbar ? navbar.offsetHeight + 20 : 20;
+
+        const targetPosition =
+            target.getBoundingClientRect().top -
+            container.getBoundingClientRect().top +
+            container.scrollTop -
+            offset;
+
+        container.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+        });
+
+        history.pushState(null, '', this.getAttribute('href'));
+    });
+});
+
+// ------------------------------------------ //
+</script>          
 {% endblock %}
