@@ -4,7 +4,8 @@ from typing import Optional, List
 
 ### Base → Create → Response pattern ###
 class PostBase(BaseModel):
-    title: str = Field(..., max_length=255)
+    
+    title: str = Field(..., max_length=255) #In Pydantic, ... is called the Ellipsis object. When used as the default value in Field(), it tells Pydantic: “There is no default value. The user must provide this field.”
     slug: str = Field(..., max_length=255, pattern="^[a-z0-9-]+$")
     content: str
     tag_line: str = Field(..., max_length=255)
