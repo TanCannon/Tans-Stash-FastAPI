@@ -36,3 +36,5 @@ passlib[bcrypt]==1.7.4
 bcrypt==4.0.1
 alembic==1.18.4
 redis==7.4.0
+pytest==9.0.2
+httpx==0.28.1

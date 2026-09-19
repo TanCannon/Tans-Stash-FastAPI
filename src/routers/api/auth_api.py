@@ -6,116 +6,65 @@ from datetime import datetime, timedelta, timezone
 
 from src.dependencies import database
 from src.models import user_model, auth_token_model
-from src.services import auth
 from src.schemas import user_schemas
-from src.services.auth import create_access_token, create_refresh_token, SECRET_KEY, ALGORITHM
+from src.services.auth import register_user_service, provide_token_on_login_service, logout_service, create_access_token, create_refresh_token, refresh_access_token_service, SECRET_KEY, ALGORITHM
 
 router = APIRouter(
     prefix="/api",
     tags=["auth"]
 )
 
-@router.post("/register")
+@router.post("/auth/register")
 async def register_user(db: database.db_dependency, username: str = Form(), email: str = Form(...), password: str = Form(...)):
-    #step1: check if user exists
-    try:
-        user = db.query(user_model.User).filter(user_model.User.email == email).first()
-        if (user):
-            raise HTTPException(status_code=400, detail="User alread exists.")
-    except Exception as e:
-        print(str(e))
-        
-    #step2: trying creating the user
-    try:
-        user_data = user_schemas.UserCreate(
+    return register_user_service(
+        db=db,
         username=username,
         email=email,
         password=password
-        )
-        created_user = auth.create_user(db, user_data)
-    except Exception as e:
-        print(str(e))
-        raise HTTPException(status_code=500, detail="Failed to register user")
-    
-    return {
-        "success": True,
-        "message": "User created Successfully",
-        "user": created_user
-    }
+    )
 
 @router.post("/token")
-def login(
+def swagger_login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: database.db_dependency
 ):
-    result = auth.provide_token_on_login(
+    access_token, refresh_token = provide_token_on_login_service(
         email=form_data.username,
         password=form_data.password,
         db=db
     )
 
-    if result is None:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
 
-    access_token, refresh_token = result
+@router.post("/auth/login")
+def login(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db: database.db_dependency
+):
+    access_token, refresh_token = provide_token_on_login_service(
+        email=form_data.username,
+        password=form_data.password,
+        db=db
+    )
 
     return {
-        "succes": True,
-        "message": "Login successful.",
+        "success": True,
         "access_token": access_token,
         "refresh_token": refresh_token,
         "token_type": "bearer"
     }
 
-@router.post("/logout")
+@router.post("/auth/logout")
 async def logout(db: database.db_dependency, refresh_token: str):
-    return auth.logout(db, refresh_token)
+    return logout_service(db=db, refresh_token=refresh_token)
 
-@router.post("/refresh")
+@router.post("/auth/refresh")
 def refresh_access_token(refresh_token: str, db: database.db_dependency):
-    try:
-        payload = jwt.decode(refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
+        return refresh_access_token_service(
+        refresh_token=refresh_token,
+        db=db,
+    )
 
-        if payload.get("type") != "refresh":
-            raise HTTPException(status_code=401, detail="Invalid token type")
-
-        user_id = payload.get("id")
-
-        # check DB
-        db_token = db.query(auth_token_model.RefreshToken).filter(
-            auth_token_model.RefreshToken.token == refresh_token,
-            auth_token_model.RefreshToken.is_revoked == False
-        ).first()
-
-        if not db_token:
-            raise HTTPException(status_code=401, detail="Invalid refresh token")
-
-        # rotate token (invalidate old one)
-        db_token.is_revoked = True
-
-        user = db.query(user_model.User).filter(user_model.User.id == user_id).first()
-
-        new_access_token = create_access_token(user)
-        new_refresh_token = create_refresh_token(user)
-
-        # store new refresh token
-        db.add(auth_token_model.RefreshToken(
-            user_id=user.id,
-            token=new_refresh_token,
-            expiry=datetime.now(timezone.utc) + timedelta(days=7)
-        ))
-
-        db.commit()
-
-        return {
-            "success": True,
-            "access_token": new_access_token,
-            "refresh_token": new_refresh_token
-        }
-
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
