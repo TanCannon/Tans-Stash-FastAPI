@@ -77,6 +77,16 @@
                     <label for="slug">Slug</label>
                 </div>
 
+                <!-- Status fo the post -->
+                <div>
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                      <option value="draft" selected>draft</option>
+                      <option value="public">public</option>
+                      <option value="private">private</option>
+                    </select>
+                </div>
+
                 <!-- Content (CKEditor will replace this) -->
                 <div class="form-floating">
                     <textarea class="form-control"

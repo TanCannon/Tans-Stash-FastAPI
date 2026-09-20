@@ -15,6 +15,7 @@ document.getElementById("editPostForm").addEventListener("submit", async functio
         tag_line: formData.get("tline"),
         description: formData.get("description"),
         slug: formData.get("slug"),
+        status: formData.get("status"),
         content: formData.get("content"),
         img_file: formData.get("img_file")
     };

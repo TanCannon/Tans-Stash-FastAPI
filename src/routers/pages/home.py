@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from fastapi.responses import HTMLResponse
 from math import ceil
 
-from src.models.post_model import Post
+from src.models.post_model import Post, PostStatus
 
 from src.core.templates import templates
 from src.core.params import params
@@ -68,10 +68,15 @@ async def home(
         per_page = POSTS_PER_PAGE
         skip = (page - 1) * per_page
 
-        total = db.query(Post).count()
+        # hardcoding post_status for home
+        post_status = PostStatus.PUBLIC
+
+        query = db.query(Post).filter(Post.status == post_status)
+
+        total = query.count()
 
         posts = (
-            db.query(Post)
+            query
             .order_by(Post.date.desc())
             .offset(skip)
             .limit(per_page)
@@ -103,8 +108,10 @@ async def home(
             },
         )
 
-    except Exception:
+    except Exception as e:
         flash(request, "Something went wrong. Please visit again later.", "danger")
+
+        print(str(e))
 
         context = get_global_context(request)
         context.update({

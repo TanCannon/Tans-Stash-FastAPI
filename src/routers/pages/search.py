@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from sqlalchemy import or_
 
-from src.models.post_model import Post
+from src.models.post_model import Post, PostStatus
 
 from src.core.context import get_global_context
 
@@ -66,13 +66,17 @@ async def search_page(
 
     per_page = POSTS_PER_PAGE
 
-    base_query = db.query(Post).filter(
+    base_query = (
+    db.query(Post)
+    .filter(
+        Post.status == PostStatus.PUBLIC,
         or_(
             Post.title.ilike(f"%{query}%"),
             Post.tag_line.ilike(f"%{query}%"),
-        )
-    ).order_by(Post.date.desc())
-
+        ),
+    )
+    .order_by(Post.date.desc())
+)
     total = base_query.count()
 
     results = (
