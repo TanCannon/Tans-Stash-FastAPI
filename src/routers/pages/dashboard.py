@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Request, Path, Query, status, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
-from typing import Annotated
+from typing import Annotated, Literal
 from sqlalchemy.orm import Session
 from math import ceil
 
 from src.database import SessionLocal
-from src.models.post_model import Post
+from src.models.post_model import Post, PostStatus
 from src.models.contact_model import Contact
 from src.models.user_usage_model import ToolUsage
 from src.core.templates import templates
@@ -17,6 +17,8 @@ from src.core.settings import settings
 
 from fastapi import Form
 from fastapi.responses import RedirectResponse
+
+from src.utils.url_builder import build_url
 
 router = APIRouter(
     prefix="/admin",
@@ -50,7 +52,7 @@ def redirect_to_login(request: Request):
     )
 
 @router.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request, db: db_dependency, page: int = Query(1, ge=1)):
+async def dashboard(request: Request, db: db_dependency, page: int = Query(1, ge=1), post_status: PostStatus | Literal["All"] | None = Query(None)):
     # Check session
     if request.session.get("admin") != settings.ADMIN_USERNAME:
         return redirect_to_login(request)
@@ -77,10 +79,16 @@ async def dashboard(request: Request, db: db_dependency, page: int = Query(1, ge
         per_page = POSTS_PER_PAGE
         skip = (page - 1) * per_page
 
-        total = db.query(Post).count()
+        query = db.query(Post)
+
+        if (post_status is not None and post_status != "All"):
+            query = query.filter(Post.status == post_status)
+
+
+        total = query.count()
 
         posts = (
-            db.query(Post)
+            query
             .order_by(Post.date.desc())
             .offset(skip)
             .limit(per_page)
@@ -89,35 +97,32 @@ async def dashboard(request: Request, db: db_dependency, page: int = Query(1, ge
 
         total_pages = ceil(total / per_page)
 
-        prev_page = (
-            str(request.url_for("dashboard")) + f"?page={page - 1}"
-            if page > 1 else "#"
-        )
-
-        next_page = (
-            str(request.url_for("dashboard")) + f"?page={page + 1}"
-            if page < total_pages else "#"
-        )
+        prev_page = build_url(request, "dashboard", page=page - 1, post_status=post_status) if page > 1 else "#"
+        next_page = build_url(request, "dashboard", page=page + 1, post_status=post_status) if page < total_pages else "#"
 
         context = get_global_context(request)
         context.update({
             "request": request,
             "params": params,
             "posts": posts,
+            "post_status": PostStatus,
+            "selected": post_status,
             "prev": prev_page,
             "next": next_page,
         })
 
         return templates.TemplateResponse("dashboard.html", context)
 
-    except Exception:
+    except Exception as e:
         flash(request, "Something went wrong. Please visit again later.", "danger")
-
+        print(e)
         context = get_global_context(request)
         context.update({
             "request": request,
             "params": params,
             "posts": [],
+            "post_status": [],
+            "selected": [],
             "prev": "#",
             "next": "#",
         })

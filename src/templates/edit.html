@@ -88,6 +88,16 @@
                     <label for="slug">Slug</label>
                 </div>
 
+                <!-- Status fo the post -->
+                <div>
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                      <option value="public" {{ 'selected' if posts.status.value == 'public' else '' }}>public</option>
+                      <option value="private" {{ 'selected' if posts.status.value == 'private' else '' }}>private</option>
+                      <option value="draft" {{ 'selected' if posts.status.value == 'draft' else '' }}>draft</option>
+                    </select>
+                </div>
+
                 <!-- Content (CKEditor will replace this) -->
                 <div class="form-floating">
                     <textarea class="form-control"

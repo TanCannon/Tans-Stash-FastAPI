@@ -6,7 +6,7 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 
 from src.database import SessionLocal
-from src.models.post_model import Post
+from src.models.post_model import Post, PostStatus
 from src.models.contact_model import Contact
 
 from src.admin.auth import require_admin
@@ -56,14 +56,21 @@ async def admin_get_posts(
     request: Request,
     db: db_dependency,
     page: int = Query(1, ge=1),
+    post_status: PostStatus | None = Query(None),
     _: str = Depends(require_admin)
 ):
     limit = 5
     skip = (page - 1) * limit
 
-    total = db.query(Post).count()
+    if page_status is not None:
+        query = db.query(Post).filter(Post.status == post_status)
+    else:
+        query = db.query(Post)
+
+    total = query.count()
+
     posts = (
-        db.query(Post)
+            query
             .order_by(Post.date.desc())
             .offset(skip)
             .limit(limit)
