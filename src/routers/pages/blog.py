@@ -4,7 +4,7 @@ from src.database import SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
 
-from src.models.post_model import Post
+from src.models.post_model import Post, PostStatus
 
 from src.services.table_of_content import generate_toc_and_clean_html
 from src.core.params import params
@@ -18,18 +18,11 @@ router = APIRouter(prefix="/blog", tags=["pages"])
 # templates = Jinja2Templates(directory="templates")
 
 def get_db():
+    db = SessionLocal()
     try:
-        db = SessionLocal()
         yield db
-    except Exception:
-        # Yield None if DB fails
-        yield None
     finally:
-        try:
-            db.close()
-        except:
-            pass
-
+        db.close()
 
 '''Dependency Injection'''
 #The API route depends on the db session to exist
@@ -44,7 +37,7 @@ def post_route(
     try:
         post = db.query(Post).filter(Post.slug == post_slug).first()
 
-        if not post:
+        if not post or post.status != PostStatus.PUBLIC:
             raise HTTPException(status_code=404, detail="Post not found")
 
         clean_html, toc = generate_toc_and_clean_html(post.content)
@@ -60,6 +53,9 @@ def post_route(
         })
 
         return templates.TemplateResponse("post.html", context)
+
+    except HTTPException:
+        raise
 
     except Exception:
         flash(request, "Something went wrong. Please visit again later.", "danger")

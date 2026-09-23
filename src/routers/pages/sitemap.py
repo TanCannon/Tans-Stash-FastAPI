@@ -10,7 +10,7 @@ from src.seo.sitemap_config import EXCLUDED_ROUTES, STATIC_PAGES_LASTMOD
 
 from src.core.templates import templates
 
-from src.models.post_model import Post
+from src.models.post_model import Post, PostStatus
 
 router = APIRouter(
     tags=["pages"]
@@ -34,7 +34,9 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 
 def get_blog_posts(db: db_dependency):
-    posts = db.query(Post.slug, Post.date).all()
+    posts = db.query(Post.slug, Post.date) \
+            .filter(Post.status == PostStatus.PUBLIC) \
+            .all()
 
     return [
         {
